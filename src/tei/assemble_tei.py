@@ -5,10 +5,13 @@ from src.utils.license_utils import license_dict
 from src.utils.ref_utils import create_initials_ref, create_name_ref, create_ref
 
 
-tag_dict = {'PER': 'persName',
-            'LOC': 'placeName',
-            'MISC': 'orgName',
-            'ORG': 'name'}
+# tag_dict = {'PER': 'persName',
+#             'LOC': 'placeName',
+#             'MISC': 'orgName',
+#             'ORG': 'name'}
+tag_dict = {'Person': 'persName',
+            'City': 'placeName',
+            'Company': 'orgName'}
 
 
 def create_header(title='', author='', editor='', publisher='', publisher_address='',
@@ -63,7 +66,7 @@ def create_header(title='', author='', editor='', publisher='', publisher_addres
                         ref = create_name_ref(e['text'])
                     else:
                         ref = create_ref(e['text'])
-                    markup += '<{} ref="{}">{}</{}>'.format(tag_dict[e['type']], ref, e['text'], tag_dict[e['type']])
+                    markup += '<{} ref="{}">{}</{}>'.format(tag_dict.get(e['type'], "name"), ref, e['text'], tag_dict.get(e['type'], "name"))
                     index = e['end_pos']
             markup += text[index:]
             markup += ' '
