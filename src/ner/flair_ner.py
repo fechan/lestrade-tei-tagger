@@ -13,6 +13,6 @@ def tag_entities(text):
     sentences = sent_tokenize(text)
     output = []
     for s in sentences:
-        output.append(tagger.predict(s, entity_types=["Person", "Financial", "Company", "City"]))
+        output.append(tagger.predict(s, entity_types=["Person", "Company", "City"]))
     return output
 
