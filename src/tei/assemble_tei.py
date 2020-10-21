@@ -9,8 +9,9 @@ from src.utils.ref_utils import create_initials_ref, create_name_ref, create_ref
 #             'LOC': 'placeName',
 #             'MISC': 'orgName',
 #             'ORG': 'name'}
-tag_dict = {'Person': 'persName',
-            'City': 'placeName',
+tag_dict = {
+    'Person': 'persName',
+    'City': 'placeName',
     'Company': 'orgName',
     'Quantity': 'measure',
     'CurrencyAmount': 'measure',
@@ -71,13 +72,21 @@ def create_header(title='', author='', editor='', publisher='', publisher_addres
             entities = x['entities']
             index = 0
             for e in entities:
-                if e['text'] not in ["I’ve", "I’ll", "I", "I’m", "I've", "I'll", "I'm", "I,"]:
+                entity_type = e["type"]
+                entity_text = e["text"]
+                tagname = tag_dict.get(e['type'], "name")
+                if entity_text not in ["I’ve", "I’ll", "I", "I’m", "I've", "I'll", "I'm", "I,"]:
                     markup += text[index:e['start_pos']]
-                    if e['type'] == 'PER':
-                        ref = create_name_ref(e['text'])
-                    else:
-                        ref = create_ref(e['text'])
-                    markup += '<{} ref="{}">{}</{}>'.format(tag_dict.get(e['type'], "name"), ref, e['text'], tag_dict.get(e['type'], "name"))
+                    # The following generates a "ref" attribute based on entity text
+                    # I'm pretty sure the output is best used for the "key" attribute
+                    # and since some of the entities have Wolfram Language entity interpretations,
+                    # it's probably better to use their canonical names as keys when possible.
+                    #
+                    # if e['type'] == 'PER':
+                    #     ref = create_name_ref(entity_text)
+                    # else:
+                    #     ref = create_ref(entity_text)
+                    markup += f'<{tagname} type="{entity_type}">{entity_text}</{tagname}>'
                     index = e['end_pos']
             markup += text[index:]
             markup += ' '
