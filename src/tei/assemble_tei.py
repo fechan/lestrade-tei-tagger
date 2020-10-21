@@ -25,6 +25,37 @@ tag_dict = {
     'HistoricalSite': 'placeName',
 }
 
+def create_markup_with_entities(annotated_sentences):
+    '''Given some source text and a list of Flair-like annotated sentences, create TEI markup with
+    the entities wrapped in the appropriate tag names
+
+    annotated_sentences: a list of sentences that we've run through a Flair-like tagger
+    '''
+    markup = ''
+    for sentence in annotated_sentences:
+        text = sentence['text']
+        entities = sentence['entities']
+        index = 0
+        for entity in entities:
+            entity_type = entity["type"]
+            entity_text = entity["text"]
+            tagname = tag_dict.get(entity['type'], "name")
+            if entity_text not in ["I’ve", "I’ll", "I", "I’m", "I've", "I'll", "I'm", "I,"]:
+                markup += text[index:entity['start_pos']]
+                # The following generates a "ref" attribute based on entity text
+                # I'm pretty sure the output is best used for the "key" attribute
+                # and since some of the entities have Wolfram Language entity interpretations,
+                # it's probably better to use their canonical names as keys when possible.
+                #
+                # if e['type'] == 'PER':
+                #     ref = create_name_ref(entity_text)
+                # else:
+                #     ref = create_ref(entity_text)
+                markup += f'<{tagname} type="{entity_type}">{entity_text}</{tagname}>'
+                index = entity['end_pos']
+        markup += text[index:]
+        markup += ' '
+    return markup
 
 def create_header(title='', author='', editor='', publisher='', publisher_address='',
                   publication_date='', license_desc='', project_description='', source_description=''):
@@ -66,30 +97,7 @@ def create_header(title='', author='', editor='', publisher='', publisher_addres
     if source_description != '':
         soup.fileDesc.append(soup.new_tag('sourceDesc'))
         soup.sourceDesc.append(soup.new_tag('p'))
-        markup = ''
-        for x in source_description:
-            text = x['text']
-            entities = x['entities']
-            index = 0
-            for e in entities:
-                entity_type = e["type"]
-                entity_text = e["text"]
-                tagname = tag_dict.get(e['type'], "name")
-                if entity_text not in ["I’ve", "I’ll", "I", "I’m", "I've", "I'll", "I'm", "I,"]:
-                    markup += text[index:e['start_pos']]
-                    # The following generates a "ref" attribute based on entity text
-                    # I'm pretty sure the output is best used for the "key" attribute
-                    # and since some of the entities have Wolfram Language entity interpretations,
-                    # it's probably better to use their canonical names as keys when possible.
-                    #
-                    # if e['type'] == 'PER':
-                    #     ref = create_name_ref(entity_text)
-                    # else:
-                    #     ref = create_ref(entity_text)
-                    markup += f'<{tagname} type="{entity_type}">{entity_text}</{tagname}>'
-                    index = e['end_pos']
-            markup += text[index:]
-            markup += ' '
+        markup = create_markup_with_entities(source_description)
         markup = markup[0:-1]
         soup.sourceDesc.p.string = markup
     if project_description != '':
@@ -123,18 +131,7 @@ def create_body(flair_output):
     soup.find('text').append(soup.new_tag('body'))
     soup.body.append(soup.new_tag('div'))
     soup.div.append(soup.new_tag('p'))
-    markup = ''
-    for x in flair_output:
-        text = x['text']
-        entities = x['entities']
-        index = 0
-        for e in entities:
-            if e['text'] not in ["I’ve", "I’ll", "I", "I’m", "I've", "I'll", "I'm", "I,"]:
-                markup += text[index:e['start_pos']]
-                markup += '<{}>{}</{}>'.format(tag_dict[e['type']], e['text'], tag_dict[e['type']])
-                index = e['end_pos']
-        markup += text[index:]
-        markup += ' '
+    markup = create_markup_with_entities(flair_output)
     markup = markup[0:-1]
     soup.p.string = markup
     return soup
