@@ -104,22 +104,7 @@ def create_header(title='', author='', editor='', publisher='', publisher_addres
         soup.fileDesc.append(soup.new_tag('encodingStmt'))
         soup.encodingStmt.append(soup.new_tag('projectDesc'))
         soup.projectDesc.append(soup.new_tag('p'))
-        markup = ''
-        for x in project_description:
-            text = x['text']
-            entities = x['entities']
-            index = 0
-            for e in entities:
-                if e['text'] not in ["I’ve", "I’ll", "I", "I’m", "I've", "I'll", "I'm", "I,"]:
-                    markup += text[index:e['start_pos']]
-                    if e['type'] == 'PER':
-                        ref = create_name_ref(e['text'])
-                    else:
-                        ref = create_ref(e['text'])
-                    markup += '<{} ref="{}">{}</{}>'.format(tag_dict[e['type']], ref, e['text'], tag_dict[e['type']])
-                    index = e['end_pos']
-            markup += text[index:]
-            markup += ' '
+        markup = create_markup_with_entities(project_description)
         markup = markup[0:-1]
         soup.projectDesc.p.string = markup
     return soup
