@@ -11,7 +11,18 @@ from src.utils.ref_utils import create_initials_ref, create_name_ref, create_ref
 #             'ORG': 'name'}
 tag_dict = {'Person': 'persName',
             'City': 'placeName',
-            'Company': 'orgName'}
+    'Company': 'orgName',
+    'Quantity': 'measure',
+    'CurrencyAmount': 'measure',
+    'Date': 'date',
+    'Location': 'placeName',
+    'River': 'geogFeat',
+    'HistoricalSite': 'placeName',
+    'Ship': 'objectName',
+    'Artwork': 'objectName',
+    'Museum': 'placeName',
+    'HistoricalSite': 'placeName',
+}
 
 
 def create_header(title='', author='', editor='', publisher='', publisher_address='',
