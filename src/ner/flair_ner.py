@@ -62,10 +62,11 @@ def remove_entity_overlaps(entities_in):
         for other_entity in entities_in:
             if entity != other_entity and is_overlapping(
                 entity['start_pos'], entity['end_pos'], other_entity['start_pos'], other_entity['end_pos']):
+                #have to turn dicts into tuples since dicts aren't hashable and can't be put in sets
                 overlapping_entities.add(tuple(other_entity.items()))
         if len(overlapping_entities) > 0:
             overlapping_entities.add(tuple(entity.items()))
-            all_overlaps.add(tuple(sorted(overlapping_entities)))
+            all_overlaps.add(tuple(sorted(overlapping_entities))) #sorted so insertion order doesn't matter
         else:
             entities_out.append(entity)
 
