@@ -53,6 +53,7 @@ def compare_entities(e1, e2):
 def remove_entity_overlaps(entities_in):
     """Removes overlapping entities from the input list. If 2 or more entities overlap in position,
     only the entity ranked highest by the given comparison function is retained in the output list.
+    The list is then sorted by the entity's start_pos.
 
     entities_in: input list of entities
     """
