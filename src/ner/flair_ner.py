@@ -14,6 +14,7 @@ wolfram_content_types = [ # More specific entity types first
     'Museum',
     'HistoricalSite',
     'City',
+    'Country',
     'Company',
     'Artwork',
     'Ship',
