@@ -74,7 +74,7 @@ def remove_entity_overlaps(entities_in):
     for overlapping_set in all_overlaps:
         entities = [dict(tup) for tup in overlapping_set]
         entities_out.append(sorted(entities, key=functools.cmp_to_key(compare_entities))[-1])
-    return entities_out
+    return sorted(entities_out, key=lambda entity: entity['start_pos'])
 
 def tag_entities(text):
     sentences = sent_tokenize(text)
