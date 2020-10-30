@@ -50,8 +50,9 @@ def submit_text():
 
     # Create body
     text = request.form['rawText']
-    text = re.sub('\n|\t\r|\r\n', ' ', text)
-    text = re.sub(' +', ' ', text)
+    text = re.sub('\r', '', text)
+    #text = re.sub('\n|\t\r|\r\n', ' ', text)
+    #text = re.sub(' +', ' ', text)
 
     flair_output = tag_entities(text)
     tei_body = create_body(flair_output)
