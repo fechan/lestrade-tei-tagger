@@ -114,9 +114,10 @@ def create_body(flair_output):
     soup.append(soup.new_tag('text'))
     soup.find('text').append(soup.new_tag('body'))
     soup.body.append(soup.new_tag('div'))
-    soup.div.append(soup.new_tag('p'))
-    markup = create_markup_with_entities(flair_output)
-    markup = markup[0:-1]
+    for paragraph in flair_output:
+        paragraph_tag = soup.new_tag('p')
+        markup = create_markup_with_entities(paragraph)
+        markup = markup[0:-1]
     soup.p.string = markup
     return soup
 
