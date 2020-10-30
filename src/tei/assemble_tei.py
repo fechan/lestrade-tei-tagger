@@ -25,11 +25,11 @@ tag_dict = {
     'HistoricalSite': 'placeName',
 }
 
-def create_markup_with_entities(annotated_sentences):
-    '''Given some source text and a list of Flair-like annotated sentences, create TEI markup with
+def create_markup_with_entities(annotated_text):
+    '''Given some source text and Flair-like annotated text, create TEI markup with
     the entities wrapped in the appropriate tag names
 
-    annotated_sentences: a list of sentences that we've run through a Flair-like tagger
+    annotated_text: text that we've run through a Flair-like tagger
     '''
     markup = ''
     text = annotated_text['text']
