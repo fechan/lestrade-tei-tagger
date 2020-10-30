@@ -1,10 +1,7 @@
 from .wlflairshim import SequenceTagger
 import logging
-from nltk import download
-from nltk.tokenize import sent_tokenize
+import re
 import functools
-
-download('punkt')
 
 tagger = SequenceTagger("/opt/Mathematica/SystemFiles/Kernel/Binaries/Linux-x86-64/WolframKernel")
 logging.info('Loaded tagger')
@@ -78,10 +75,10 @@ def remove_entity_overlaps(entities_in):
     return sorted(entities_out, key=lambda entity: entity['start_pos'])
 
 def tag_entities(text):
-    sentences = sent_tokenize(text)
+    paragraphs = re.split(r'\n{2,}', text)
     output = []
-    for s in sentences:
-        tagger_output = tagger.predict(s, entity_types=wolfram_content_types)
+    for p in paragraphs:
+        tagger_output = tagger.predict(p, entity_types=wolfram_content_types)
         tagger_output['entities'] = remove_entity_overlaps(tagger_output['entities'])
         output.append(tagger_output)
     return output
