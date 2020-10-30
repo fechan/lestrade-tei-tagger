@@ -118,7 +118,8 @@ def create_body(flair_output):
         paragraph_tag = soup.new_tag('p')
         markup = create_markup_with_entities(paragraph)
         markup = markup[0:-1]
-    soup.p.string = markup
+        paragraph_tag.string = markup
+        soup.div.append(paragraph_tag)
     return soup
 
 
