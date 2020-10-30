@@ -55,7 +55,7 @@ def remove_entity_overlaps(entities_in):
     only the entity ranked highest by the given comparison function is retained in the output list.
     The list is then sorted by the entity's start_pos.
 
-    entities_in: input list of entities
+    entities_in -- input list of entities
     """
     entities_out = []
     all_overlaps = set()
