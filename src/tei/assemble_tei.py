@@ -25,33 +25,34 @@ tag_dict = {
     'HistoricalSite': 'placeName',
 }
 
-def create_markup_with_entities(annotated_text):
-    '''Given some source text and Flair-like annotated text, create TEI markup with
+def create_markup_with_entities(annotated_sentences):
+    '''Given some source text and a list of Flair-like annotated sentences, create TEI markup with
     the entities wrapped in the appropriate tag names
 
-    annotated_text: text that we've run through a Flair-like tagger
+    annotated_sentences: a list of sentences that we've run through a Flair-like tagger
     '''
     markup = ''
-    text = annotated_text['text']
-    entities = annotated_text['entities']
-    index = 0
-    for entity in entities:
-        entity_type = entity["type"]
-        entity_text = entity["text"]
-        tagname = tag_dict.get(entity['type'], "name")
-        if entity_text not in ["I’ve", "I’ll", "I", "I’m", "I've", "I'll", "I'm", "I,"]:
-            markup += text[index:entity['start_pos']]
-            # The following generates a "ref" attribute based on entity text
-            # I'm pretty sure the output is best used for the "key" attribute
-            # and since some of the entities have Wolfram Language entity interpretations,
-            # it's probably better to use their canonical names as keys when possible.
-            #
-            # if e['type'] == 'PER':
-            #     ref = create_name_ref(entity_text)
-            # else:
-            #     ref = create_ref(entity_text)
-            markup += f'<{tagname} type="{entity_type}">{entity_text}</{tagname}>'
-            index = entity['end_pos']
+    for sentence in annotated_sentences:
+        text = sentence['text']
+        entities = sentence['entities']
+        index = 0
+        for entity in entities:
+            entity_type = entity["type"]
+            entity_text = entity["text"]
+            tagname = tag_dict.get(entity['type'], "name")
+            if entity_text not in ["I’ve", "I’ll", "I", "I’m", "I've", "I'll", "I'm", "I,"]:
+                markup += text[index:entity['start_pos']]
+                # The following generates a "ref" attribute based on entity text
+                # I'm pretty sure the output is best used for the "key" attribute
+                # and since some of the entities have Wolfram Language entity interpretations,
+                # it's probably better to use their canonical names as keys when possible.
+                #
+                # if e['type'] == 'PER':
+                #     ref = create_name_ref(entity_text)
+                # else:
+                #     ref = create_ref(entity_text)
+                markup += f'<{tagname} type="{entity_type}">{entity_text}</{tagname}>'
+                index = entity['end_pos']
         markup += text[index:]
         markup += ' '
     return markup
@@ -116,7 +117,7 @@ def create_body(flair_output):
     soup.body.append(soup.new_tag('div'))
     for paragraph in flair_output:
         paragraph_tag = soup.new_tag('p')
-        markup = create_markup_with_entities(paragraph)
+        markup = create_markup_with_entities([paragraph])
         markup = markup[0:-1]
         paragraph_tag.string = markup
         soup.div.append(paragraph_tag)
