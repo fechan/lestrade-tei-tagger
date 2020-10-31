@@ -1,5 +1,5 @@
 import re
-from ner.flair_ner import tag_entities
+from ner.flair_ner import tag_entities, tagger
 from tei.assemble_tei import create_header, create_xml, create_body
 
 def convert_to_tei(text, **kwargs):
@@ -49,3 +49,4 @@ with no protection but that our umbrellas and wraps gave us.  Came to
 our old quarters at Hotel Chatham.
 
 Shepheards Hotel Cairo - Egypt.  Dec. 12. 1889.'''))
+tagger.close()

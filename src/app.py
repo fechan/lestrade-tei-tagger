@@ -1,7 +1,7 @@
 import re
 from flask import Flask, request, render_template
 from gevent.pywsgi import WSGIServer
-from ner.flair_ner import tag_entities
+from ner.flair_ner import tag_entities, tagger
 from tei.assemble_tei import create_header, create_xml, create_body
 
 app = Flask(__name__)
@@ -64,4 +64,7 @@ def submit_text():
 
 
 if __name__ == '__main__':
-    WSGIServer(('0.0.0.0', 3000), app).serve_forever()
+    try:
+        WSGIServer(('0.0.0.0', 3000), app).serve_forever()
+    except KeyboardInterrupt:
+        tagger.close()
