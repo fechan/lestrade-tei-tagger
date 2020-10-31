@@ -1,8 +1,8 @@
 import re
 from bs4 import BeautifulSoup
 from lxml import etree
-from src.utils.license_utils import license_dict
-from src.utils.ref_utils import create_initials_ref, create_name_ref, create_ref
+from utils.license_utils import license_dict
+from utils.ref_utils import create_initials_ref, create_name_ref, create_ref
 
 
 # tag_dict = {'PER': 'persName',

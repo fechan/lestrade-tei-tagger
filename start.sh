@@ -6,4 +6,5 @@ pip install --upgrade pip
 pip install -r requirements.txt --no-cache-dir
 
 echo "Starting service"
-python -m src.app &
+cd src
+python -m app &

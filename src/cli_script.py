@@ -1,38 +1,17 @@
 import re
-from flask import Flask, request, render_template
-from gevent.pywsgi import WSGIServer
 from ner.flair_ner import tag_entities
 from tei.assemble_tei import create_header, create_xml, create_body
 
-app = Flask(__name__)
-
-
-@app.route('/')
-def index():
-    return render_template('markup.html')
-
-
-@app.route('/about')
-def about():
-    return render_template('about.html')
-
-
-@app.route('/output')
-def output():
-    return render_template('output.html')
-
-
-@app.route('/', methods=['POST'])
-def submit_text():
-    title = request.form['teiHeaderTitle']
-    author = request.form['teiHeaderAuthor']
-    editor = request.form['teiHeaderEditor']
-    publisher = request.form['teiHeaderPublisher']
-    publisher_address = request.form['teiHeaderPublisherAddress']
-    publication_date = request.form['teiHeaderPublicationDate']
-    license_desc = request.form['teiHeaderLicense']
-    project_description = request.form['teiHeaderProjectDescription']
-    source_description = request.form['teiHeaderSourceDescription']
+def convert_to_tei(text, **kwargs):
+    title = kwargs.get('title', '')
+    author = kwargs.get('author', '')
+    editor = kwargs.get('editor', '')
+    publisher = kwargs.get('publisher', '')
+    publisher_address = kwargs.get('publisher_address', '')
+    publication_date = kwargs.get('publisher_date', '')
+    license_desc = kwargs.get('license_desc', '')
+    project_description = kwargs.get('project_description', '')
+    source_description = kwargs.get('source_description', '')
 
     project_description = re.sub('\n|\t\r|\r\n', ' ', project_description)
     project_description = re.sub(' +', ' ', project_description)
@@ -49,7 +28,7 @@ def submit_text():
                                publication_date, license_desc, project_description, source_description)
 
     # Create body
-    text = request.form['rawText']
+    text = text
     text = re.sub('\r', '', text)
     #text = re.sub('\n|\t\r|\r\n', ' ', text)
     #text = re.sub(' +', ' ', text)
@@ -59,9 +38,14 @@ def submit_text():
 
     # Assemble document
     tei_document = create_xml(tei_header, tei_body).decode('unicode-escape')
-    return render_template('output.html',
-                           tei=tei_document)
+    return tei_document
 
+print(convert_to_tei('''page 1 Paris. December 1st, 1889.
 
-if __name__ == '__main__':
-    WSGIServer(('0.0.0.0', 3000), app).serve_forever()
+Sailed from New York, Saturday November 16th on S.S. Bourgogne, and
+arrived at Havre Nov. 24th at noon.  A dull and uneventful voyage - and
+a most disagreeable landing in a heavy storm of wind and rain, in a tug,
+with no protection but that our umbrellas and wraps gave us.  Came to
+our old quarters at Hotel Chatham.
+
+Shepheards Hotel Cairo - Egypt.  Dec. 12. 1889.'''))
