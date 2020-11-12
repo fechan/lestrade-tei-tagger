@@ -16,7 +16,6 @@ decorator==4.4.2
 Deprecated==1.2.10
 docopt==0.6.2
 filelock==3.0.12
-flair==0.6.1
 Flask==1.0.2
 ftfy==5.8
 future==0.18.2
@@ -55,7 +54,6 @@ pyparsing==2.4.7
 PySocks==1.7.1
 pytest==6.1.1
 python-dateutil==2.8.1
-pytorch-pretrained-bert==0.6.2
 pytz==2020.1
 pyzmq==19.0.2
 regex==2018.1.10
@@ -76,7 +74,6 @@ tabulate==0.8.7
 threadpoolctl==2.1.0
 tokenizers==0.8.1rc2
 toml==0.10.1
-torch==1.6.0
 tqdm==4.50.2
 transformers==3.3.1
 urllib3==1.24.2
