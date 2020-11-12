@@ -10,9 +10,11 @@ certifi==2020.6.20
 chardet==3.0.4
 click==7.1.2
 cloudpickle==1.6.0
+contextlib2==0.6.0.post1
 cycler==0.10.0
 decorator==4.4.2
 Deprecated==1.2.10
+docopt==0.6.2
 filelock==3.0.12
 flair==0.6.1
 Flask==1.0.2
@@ -25,11 +27,14 @@ greenlet==0.4.17
 hyperopt==0.2.5
 idna==2.10
 iniconfig==1.0.1
+internetarchive==1.9.5
 itsdangerous==1.1.0
 Janome==0.4.1
 Jinja2==2.11.2
 jmespath==0.10.0
 joblib==0.17.0
+jsonpatch==1.26
+jsonpointer==2.0
 kiwisolver==1.2.0
 konoha==4.6.2
 langdetect==1.0.8
@@ -57,6 +62,7 @@ regex==2018.1.10
 requests==2.24.0
 s3transfer==0.3.3
 sacremoses==0.0.43
+schema==0.7.2
 scikit-learn==0.23.2
 scipy==1.5.2
 segtok==1.5.10
