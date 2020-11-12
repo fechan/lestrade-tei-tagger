@@ -9,6 +9,7 @@ from tei.assemble_document import create_document
 
 filenames = next(os.walk("txt_files"))[2]
 for filename in filenames:
+    print("Now tagging", filename)
     with open(f"./tei_files/{filename}.tei", "w") as output_file:
         with open(f"./txt_files/{filename}", "r") as book:
             content = book.read()
