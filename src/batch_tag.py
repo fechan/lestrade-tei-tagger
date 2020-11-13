@@ -16,4 +16,5 @@ for filename in filenames:
             content = book.read()
         output_file.write(create_document(ner, content))
 print("All files in txt_files directory tagged.")
+print(ner.get_seen_entities())
 ner.close()

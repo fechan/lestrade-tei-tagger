@@ -16,6 +16,7 @@ wolfram_content_types = [ # More specific entity types first
     'Date',
     'CurrencyAmount',
     'Quantity',
+    'LocationEntity',
     'Location'
 ]
 type_precedence = wolfram_content_types
@@ -74,6 +75,7 @@ def remove_entity_overlaps(entities_in):
 class NamedEntityRecognizer:
     def __init__(self):
         self.tagger = SequenceTagger("/opt/Mathematica/SystemFiles/Kernel/Binaries/Linux-x86-64/WolframKernel")
+        self.seen_entities = set()
 
     def tag_entities(self, text):
         paragraphs = re.split(r'\n{2,}', text)
@@ -81,8 +83,13 @@ class NamedEntityRecognizer:
         for p in paragraphs:
             tagger_output = self.tagger.predict(p, entity_types=wolfram_content_types)
             tagger_output['entities'] = remove_entity_overlaps(tagger_output['entities'])
+            for entity in tagger_output['entities']:
+                self.seen_entities.add(entity['id'])
             output.append(tagger_output)
         return output
+
+    def get_seen_entities(self):
+        return list(self.seen_entities)
 
     def close(self):
         self.tagger.close()
