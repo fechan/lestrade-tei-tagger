@@ -1,11 +1,12 @@
 import re
 from flask import Flask, request, render_template
 from gevent.pywsgi import WSGIServer
-from ner.flair_ner import tag_entities, tagger
+#from ner.flair_ner import tag_entities, tagger
+from ner.flair_ner import NamedEntityRecognizer
 from tei.assemble_tei import create_header, create_xml, create_body
 
 app = Flask(__name__)
-
+ner = NamedEntityRecognizer()
 
 @app.route('/')
 def index():
@@ -37,12 +38,12 @@ def submit_text():
     project_description = re.sub('\n|\t\r|\r\n', ' ', project_description)
     project_description = re.sub(' +', ' ', project_description)
     if project_description != '':
-        project_description = tag_entities(project_description)
+        project_description = ner.tag_entities(project_description)
 
     source_description = re.sub('\n|\t\r|\r\n', ' ', source_description)
     source_description = re.sub(' +', ' ', source_description)
     if source_description != '':
-        source_description = tag_entities(source_description
+        source_description = ner.tag_entities(source_description
                                           )
     # Create header
     tei_header = create_header(title, author, editor, publisher, publisher_address,
@@ -54,7 +55,7 @@ def submit_text():
     #text = re.sub('\n|\t\r|\r\n', ' ', text)
     #text = re.sub(' +', ' ', text)
 
-    flair_output = tag_entities(text)
+    flair_output = ner.tag_entities(text)
     tei_body = create_body(flair_output)
 
     # Assemble document
@@ -67,4 +68,4 @@ if __name__ == '__main__':
     try:
         WSGIServer(('0.0.0.0', 3000), app).serve_forever()
     except KeyboardInterrupt:
-        tagger.close()
+        ner.close()

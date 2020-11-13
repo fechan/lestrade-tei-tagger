@@ -3,9 +3,6 @@ import logging
 import re
 import functools
 
-tagger = SequenceTagger("/opt/Mathematica/SystemFiles/Kernel/Binaries/Linux-x86-64/WolframKernel")
-logging.info('Loaded tagger')
-
 wolfram_content_types = [ # More specific entity types first
     'Person',
     'Museum',
@@ -74,11 +71,18 @@ def remove_entity_overlaps(entities_in):
         entities_out.append(sorted(entities, key=functools.cmp_to_key(compare_entities))[-1])
     return sorted(entities_out, key=lambda entity: entity['start_pos'])
 
-def tag_entities(text):
-    paragraphs = re.split(r'\n{2,}', text)
-    output = []
-    for p in paragraphs:
-        tagger_output = tagger.predict(p, entity_types=wolfram_content_types)
-        tagger_output['entities'] = remove_entity_overlaps(tagger_output['entities'])
-        output.append(tagger_output)
-    return output
+class NamedEntityRecognizer:
+    def __init__(self):
+        self.tagger = SequenceTagger("/opt/Mathematica/SystemFiles/Kernel/Binaries/Linux-x86-64/WolframKernel")
+
+    def tag_entities(self, text):
+        paragraphs = re.split(r'\n{2,}', text)
+        output = []
+        for p in paragraphs:
+            tagger_output = self.tagger.predict(p, entity_types=wolfram_content_types)
+            tagger_output['entities'] = remove_entity_overlaps(tagger_output['entities'])
+            output.append(tagger_output)
+        return output
+
+    def close(self):
+        self.tagger.close()
