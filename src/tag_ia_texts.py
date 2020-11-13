@@ -3,11 +3,12 @@
 import io
 import re
 from internetarchive import get_files
-from ner.flair_ner import tagger
+from ner.flair_ner import NamedEntityRecognizer
 from tei.assemble_document import create_document
 
 ia_idents = ["reminiscencesoft00tangrich"]
 
+ner = NamedEntityRecognizer()
 for ident in ia_idents:
     files = get_files(ident, glob_pattern="*djvu.txt", formats="txt")
     txt_file = next(files)
@@ -15,5 +16,5 @@ for ident in ia_idents:
     with open(f"./tei_files/{ident}.tei", "w") as output_file:
         with open(f"./txt_files/{ident}.txt", "r") as book:
             content = book.read()
-        output_file.write(create_document(content))
-tagger.close()
+        output_file.write(create_document(ner, content))
+ner.close()

@@ -1,7 +1,6 @@
 import re
 from flask import Flask, request, render_template
 from gevent.pywsgi import WSGIServer
-#from ner.flair_ner import tag_entities, tagger
 from ner.flair_ner import NamedEntityRecognizer
 from tei.assemble_tei import create_header, create_xml, create_body
 
