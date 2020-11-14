@@ -87,7 +87,7 @@ def remove_entity_overlaps(entities_in):
 
 class NamedEntityRecognizer:
     def __init__(self):
-        self.tagger = SequenceTagger("/opt/Mathematica/SystemFiles/Kernel/Binaries/Linux-x86-64/WolframKernel")
+        self.tagger = SequenceTagger('/opt/Mathematica/SystemFiles/Kernel/Binaries/Linux-x86-64/WolframKernel')
         self.seen_entities = set()
 
     def tag_entities(self, text):
