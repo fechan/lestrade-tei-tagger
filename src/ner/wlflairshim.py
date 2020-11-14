@@ -1,27 +1,5 @@
 from wolframclient.evaluation import WolframLanguageSession
 from wolframclient.language import wl, wlexpr
-import json
-import html
-
-non_entities = [ # Text content types you don't want to process as Mathematica entities
-    "Quantity",
-    "CurrencyAmount",
-    "Location",
-    "Date"
-]
-
-def to_xml_id(entity: dict) -> str:
-    """Turns a Mathematica entity into a unique ID that can be used as an XML attribute value
-    entity -- Mathematica entity to turn into and ID
-    """
-    entity_type = entity["Type"]
-    if entity_type in non_entities: return None
-    try:
-        canonical_name = entity["Interpretation"].args[1]
-        canonical_name = html.escape(json.dumps(canonical_name, separators=(',', ':')))
-        return f"urn:WolframEntity:{entity_type}:{canonical_name}"
-    except AttributeError: # sometimes Mathematica returns the input string as an interpretation, which isn't helpful
-        return None
 
 class SequenceTagger:
     def __init__(self, wl_kernel=None):
@@ -54,7 +32,7 @@ class SequenceTagger:
                 "end_pos": entity["Position"][1],
                 "type": entity["Type"],
                 "confidence": entity["Probability"],
-                "id": to_xml_id(entity)
+                "interpretation": entity["Interpretation"]
             })
         return {
             "text": text,

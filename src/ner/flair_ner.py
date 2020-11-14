@@ -1,7 +1,8 @@
 from .wlflairshim import SequenceTagger
-import logging
 import re
 import functools
+import json
+import html
 
 wolfram_content_types = [ # More specific entity types first
     'Person',
@@ -20,6 +21,18 @@ wolfram_content_types = [ # More specific entity types first
     'Location'
 ]
 type_precedence = wolfram_content_types
+
+def to_xml_id(interpretation):
+    """Turns a Mathematica text content interpreation into a unique ID that can be used as an XML
+    attribute value. Returns none if it's not a Mathematica entity.
+
+    interpretation -- Mathematica text content interpretation to turn into and ID
+    """
+    if type(interpretation) is str or interpretation.head.name != 'Entity': return None
+    entity_type = interpretation.args[0]
+    canonical_name = interpretation.args[1]
+    canonical_name = html.escape(json.dumps(canonical_name, separators=(',', ':')))
+    return f"urn:WolframEntity:{entity_type}:{canonical_name}"
 
 def is_overlapping(x1, x2, y1, y2):
     return x1 <= y2 and y1 <= x2
@@ -84,7 +97,8 @@ class NamedEntityRecognizer:
             tagger_output = self.tagger.predict(p, entity_types=wolfram_content_types)
             tagger_output['entities'] = remove_entity_overlaps(tagger_output['entities'])
             for entity in tagger_output['entities']:
-                self.seen_entities.add(entity['id'])
+                entity['id'] = to_xml_id(entity['interpretation'])
+                if entity['id'] != None: self.seen_entities.add(entity['id'])
             output.append(tagger_output)
         return output
 
