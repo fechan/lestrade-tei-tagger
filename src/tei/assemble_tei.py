@@ -40,7 +40,7 @@ def create_markup_with_entities(annotated_text):
         entity_type = entity["type"]
         entity_text = entity["text"]
         tagname = tag_dict.get(entity['type'], "name")
-        if entity_text not in ["I’ve", "I’ll", "I", "I’m", "I've", "I'll", "I'm", "I,"]:
+        if entity_text not in ["I’ve", "I’ll", "I", "I’m", "I've", "I'll", "I'm", "I,", "Today", "today"]: # Mathematica thinks instances of "today" refers to runtime
             markup += text[index:entity['start_pos']]
             # The following generates a "ref" attribute based on entity text
             # I'm pretty sure the output is best used for the "key" attribute
@@ -51,7 +51,19 @@ def create_markup_with_entities(annotated_text):
             #     ref = create_name_ref(entity_text)
             # else:
             #     ref = create_ref(entity_text)
-            markup += f'<{tagname} type="{entity_type}">{entity_text}</{tagname}>'
+            if ('interpretation' in entity and 
+                    type(entity['interpretation']) is not str and
+                    entity['interpretation'].head.name in ['Quantity', 'DateObject']): #TODO: GeoPosition
+                interpretation_type = entity['interpretation'].head.name
+                if interpretation_type == 'Quantity':
+                    quantity = entity['interpretation'].args[0]
+                    unit = entity['interpretation'].args[1]
+                    markup += f'<{tagname} type="{entity_type}" quantity="{quantity}" unit="{unit}">{entity_text}</{tagname}>'
+                elif interpretation_type == 'DateObject':
+                    year, month, day = entity['interpretation'].args[0]
+                    markup += f'<{tagname} type="{entity_type}" when="{year}-{month}-{day}">{entity_text}</{tagname}>'
+            else:
+                markup += f'<{tagname} type="{entity_type}">{entity_text}</{tagname}>'
             index = entity['end_pos']
     markup += text[index:]
     markup += ' '
