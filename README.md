@@ -6,7 +6,7 @@ Wolfram Language entity data to extract additional information about tagged enti
 Lestrade TEI Tagger is based off of Audrey Holmes' [Historical Markup Tool](http://www.historical-markup.com),
 which used Flair to detect entities.
 
-# Entity ref URI scheme
+## Entity ref URI scheme
 If Mathematica thinks a text entity has a Wolfram Language entity interpretation, then the text entity's TEI
 tag will have a @ref attribute that is a URI with the following schema:
 ```
