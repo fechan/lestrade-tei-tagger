@@ -39,6 +39,7 @@ def create_markup_with_entities(annotated_text):
     for entity in entities:
         entity_type = entity["type"]
         entity_text = entity["text"]
+        entity_id = entity["id"]
         tagname = tag_dict.get(entity['type'], "name")
         if entity_text not in ["I’ve", "I’ll", "I", "I’m", "I've", "I'll", "I'm", "I,", "Today", "today"]: # Mathematica thinks instances of "today" refers to runtime
             markup += text[index:entity['start_pos']]
@@ -53,7 +54,7 @@ def create_markup_with_entities(annotated_text):
             #     ref = create_ref(entity_text)
             if ('interpretation' in entity and 
                     type(entity['interpretation']) is not str and
-                    entity['interpretation'].head.name in ['Quantity', 'DateObject']): #TODO: GeoPosition
+                    entity['interpretation'].head.name in ['Quantity', 'DateObject', 'GeoPosition']):
                 interpretation_type = entity['interpretation'].head.name
                 if interpretation_type == 'Quantity':
                     quantity = entity['interpretation'].args[0]
@@ -62,8 +63,17 @@ def create_markup_with_entities(annotated_text):
                 elif interpretation_type == 'DateObject':
                     year, month, day = entity['interpretation'].args[0]
                     markup += f'<{tagname} type="{entity_type}" when="{year}-{month}-{day}">{entity_text}</{tagname}>'
+                elif interpretation_type == 'GeoPosition':
+                    latitude, longitude = entity['interpretation'].args[0]
+                    markup_lines = [
+                        f'<place>',
+                        f'   <placeName>{entity_text}</placeName>',
+                        f'   <location><geo decls="#ITRF00">{latitude}, {longitude}</geo></location>', # Mathematica uses ITRF00 datum by default
+                        f'</place>',
+                    ]
+                    markup += '\n'.join(markup_lines)
             else:
-                markup += f'<{tagname} type="{entity_type}">{entity_text}</{tagname}>'
+                markup += f'<{tagname} type="{entity_type}" ref="{entity_id}">{entity_text}</{tagname}>'
             index = entity['end_pos']
     markup += text[index:]
     markup += ' '
