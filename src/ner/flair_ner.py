@@ -88,7 +88,7 @@ def remove_entity_overlaps(entities_in):
 class NamedEntityRecognizer:
     def __init__(self):
         self.tagger = SequenceTagger('/opt/Mathematica/SystemFiles/Kernel/Binaries/Linux-x86-64/WolframKernel')
-        self.seen_entities = set()
+        self.seen_entities = dict() # Looks like {'id': entity}. Each entity has a unique canonical id, which is nice because it also prevents duplicates
 
     def tag_entities(self, text):
         paragraphs = re.split(r'\n{2,}', text)
@@ -97,13 +97,14 @@ class NamedEntityRecognizer:
             tagger_output = self.tagger.predict(p, entity_types=wolfram_content_types)
             tagger_output['entities'] = remove_entity_overlaps(tagger_output['entities'])
             for entity in tagger_output['entities']:
-                entity['id'] = to_xml_id(entity['interpretation'])
-                if entity['id'] != None: self.seen_entities.add(entity['id'])
+                entity_id = to_xml_id(entity['interpretation'])
+                entity['id'] = entity_id
+                if entity_id != None: self.seen_entities[entity_id] = entity['interpretation']
             output.append(tagger_output)
         return output
 
     def get_seen_entities(self):
-        return list(self.seen_entities)
+        return self.seen_entities
 
     def close(self):
         self.tagger.close()
