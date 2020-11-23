@@ -1,5 +1,5 @@
 import re
-from tei.assemble_tei import create_header, create_xml, create_body
+from src.tei.assemble_tei import create_header, create_xml, create_body
 
 def create_document(ner, text, **kwargs):
     """Turns raw text into a tagged TEI document. Can be given keyword args to add TEI meta tags.

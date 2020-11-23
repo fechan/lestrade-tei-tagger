@@ -4,8 +4,8 @@ them in the tei_files directory with the same name, but with ".tei" added to the
 txt_files directory should be in your current working directory.
 """
 import os
-from ner.flair_ner import NamedEntityRecognizer
-from tei.assemble_document import create_document
+from src.ner.flair_ner import NamedEntityRecognizer
+from src.tei.assemble_document import create_document
 
 ner = NamedEntityRecognizer()
 filenames = next(os.walk("txt_files"))[2]
