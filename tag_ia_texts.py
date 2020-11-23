@@ -2,13 +2,21 @@
 """
 import io
 import re
+import json
 from internetarchive import get_files
-from ner.flair_ner import NamedEntityRecognizer
-from tei.assemble_document import create_document
+from src.ner.flair_ner import NamedEntityRecognizer
+from src.tei.assemble_document import create_document
 
 ia_idents = ["reminiscencesoft00tangrich"]
 
-ner = NamedEntityRecognizer()
+with open('settings.json', 'r') as f:
+    settings = json.load(f)
+
+ner = NamedEntityRecognizer(
+    settings['wolfram_kernel_path'],
+    settings['content_types_precedence_order'],
+    settings['minimum_confidence'],
+)
 for ident in ia_idents:
     files = get_files(ident, glob_pattern="*djvu.txt", formats="txt")
     txt_file = next(files)
