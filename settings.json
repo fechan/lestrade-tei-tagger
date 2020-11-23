@@ -1,0 +1,20 @@
+{
+    "wolfram_kernel_path": "/opt/Mathematica/SystemFiles/Kernel/Binaries/Linux-x86-64/WolframKernel",
+    "minimum_confidence": 0.10,
+    "content_types_precedence_order": [
+        "Person",
+        "Museum",
+        "HistoricalSite",
+        "City",
+        "Country",
+        "Company",
+        "Artwork",
+        "Ship",
+        "River",
+        "Date",
+        "CurrencyAmount",
+        "Quantity",
+        "LocationEntity",
+        "Location"
+    ]
+}

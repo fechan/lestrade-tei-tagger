@@ -4,10 +4,18 @@ them in the tei_files directory with the same name, but with ".tei" added to the
 txt_files directory should be in your current working directory.
 """
 import os
+import json
 from src.ner.flair_ner import NamedEntityRecognizer
 from src.tei.assemble_document import create_document
 
-ner = NamedEntityRecognizer()
+with open('settings.json', 'r') as f:
+    settings = json.load(f)
+
+ner = NamedEntityRecognizer(
+    settings['wolfram_kernel_path'],
+    settings['content_types_precedence_order'],
+    settings['minimum_confidence'],
+)
 filenames = next(os.walk("txt_files"))[2]
 for filename in filenames:
     print("Now tagging", filename)
