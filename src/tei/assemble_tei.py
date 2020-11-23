@@ -61,8 +61,18 @@ def create_markup_with_entities(annotated_text):
                     unit = entity['interpretation'].args[1]
                     markup += f'<{tagname} type="{entity_type}" quantity="{quantity}" unit="{unit}">{entity_text}</{tagname}>'
                 elif interpretation_type == 'DateObject':
-                    year, month, day = entity['interpretation'].args[0]
-                    markup += f'<{tagname} type="{entity_type}" when="{year}-{month}-{day}">{entity_text}</{tagname}>'
+                    date_tuple = entity['interpretation'].args[0]
+                    when = ""
+                    if len(date_tuple) == 3:
+                        year, month, day = date_tuple
+                        when = f'{year}-{month}-{day}'
+                    elif len(date_tuple) == 2:
+                        year, month = date_tuple
+                        when = f'{year}-{month}'
+                    elif len(date_tuple) == 1:
+                        year = date_tuple[0]
+                        when = f'{year}'
+                    markup += f'<{tagname} type="{entity_type}" when="{when}">{entity_text}</{tagname}>'
                 elif interpretation_type == 'GeoPosition':
                     latitude, longitude = entity['interpretation'].args[0]
                     markup_lines = [
