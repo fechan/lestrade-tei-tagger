@@ -83,7 +83,10 @@ def create_markup_with_entities(annotated_text):
                     ]
                     markup += '\n'.join(markup_lines)
             else:
-                markup += f'<{tagname} type="{entity_type}" ref="{entity_id}">{entity_text}</{tagname}>'
+                if entity_id != None:
+                    markup += f'<{tagname} type="{entity_type}" ref="{entity_id}">{entity_text}</{tagname}>'
+                else:
+                    markup += f'<{tagname} type="{entity_type}">{entity_text}</{tagname}>'
             index = entity['end_pos']
     markup += text[index:]
     markup += ' '
