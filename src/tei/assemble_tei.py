@@ -26,13 +26,14 @@ tag_dict = {
     'HistoricalSite': 'placeName',
 }
 
-def create_markup_with_entities(annotated_text):
+def create_markup_with_entities(annotated_text, paragraph_tag, soup):
     '''Given some source text and Flair-like annotated text, create TEI markup with
     the entities wrapped in the appropriate tag names
     
     annotated_text: text that we've run through a Flair-like tagger
+
+    TODO: edit this docstring
     '''
-    markup = ''
     text = annotated_text['text']
     entities = annotated_text['entities']
     index = 0
@@ -42,16 +43,7 @@ def create_markup_with_entities(annotated_text):
         entity_id = entity["id"]
         tagname = tag_dict.get(entity['type'], "name")
         if entity_text not in ["I’ve", "I’ll", "I", "I’m", "I've", "I'll", "I'm", "I,", "Today", "today"]: # Mathematica thinks instances of "today" refers to runtime
-            markup += text[index:entity['start_pos']]
-            # The following generates a "ref" attribute based on entity text
-            # I'm pretty sure the output is best used for the "key" attribute
-            # and since some of the entities have Wolfram Language entity interpretations,
-            # it's probably better to use their canonical names as keys when possible.
-            #
-            # if e['type'] == 'PER':
-            #     ref = create_name_ref(entity_text)
-            # else:
-            #     ref = create_ref(entity_text)
+            paragraph_tag.append(text[index:entity['start_pos']])
             if ('interpretation' in entity and 
                     type(entity['interpretation']) is not str and
                     entity['interpretation'].head.name in ['Quantity', 'DateObject', 'GeoPosition']):
@@ -59,7 +51,11 @@ def create_markup_with_entities(annotated_text):
                 if interpretation_type == 'Quantity':
                     quantity = entity['interpretation'].args[0]
                     unit = entity['interpretation'].args[1]
-                    markup += f'<{tagname} type="{entity_type}" quantity="{quantity}" unit="{unit}">{entity_text}</{tagname}>'
+
+                    quantity_tag = soup.new_tag(tagname, type=entity_type, quantity=quantity, unit=unit)
+                    quantity_tag.string = entity_text
+
+                    paragraph_tag.append(quantity_tag)
                 elif interpretation_type == 'DateObject':
                     date_tuple = entity['interpretation'].args[0]
                     when = ""
@@ -72,25 +68,41 @@ def create_markup_with_entities(annotated_text):
                     elif len(date_tuple) == 1:
                         year = date_tuple[0]
                         when = f'{year}'
-                    markup += f'<{tagname} type="{entity_type}" when="{when}">{entity_text}</{tagname}>'
+
+                    dateobject_tag = soup.new_tag(tagname, type=entity_type, when=when)
+                    dateobject_tag.string = entity_text
+
+                    paragraph_tag.append(dateobject_tag)
                 elif interpretation_type == 'GeoPosition':
+                    """ RESULTING XML LOOKS LIKE:
+                    <place>
+                       <placeName>{entity_text}</placeName>
+                       <location><geo decls="#ITRF00">{latitude}, {longitude}</geo></location>
+                    </place>
+                    """
                     latitude, longitude = entity['interpretation'].args[0]
-                    markup_lines = [
-                        f'<place>',
-                        f'   <placeName>{entity_text}</placeName>',
-                        f'   <location><geo decls="#ITRF00">{latitude}, {longitude}</geo></location>', # Mathematica uses ITRF00 datum by default
-                        f'</place>',
-                    ]
-                    markup += '\n'.join(markup_lines)
+                    place_tag = soup.new_tag("place")
+                    
+                    placename_tag = soup.new_tag("placeName")
+                    placename_tag.string = entity_text
+
+                    location_tag = soup.new_tag("location")
+                    geo_tag = soup.new_tag("geo", decls="#ITRF00") # Mathematica uses ITRF00 datum by default
+                    geo_tag.string = f"{latitude}, {longitude}"
+                    location_tag.append(geo_tag)
+
+                    paragraph_tag.append(place_tag)
             else:
                 if entity_id != None:
-                    markup += f'<{tagname} type="{entity_type}" ref="{entity_id}">{entity_text}</{tagname}>'
+                    entity_tag = soup.new_tag(tagname, type=entity_type, ref=entity_id)
+                    entity_tag.string = entity_text
+                    paragraph_tag.append(entity_tag)
                 else:
-                    markup += f'<{tagname} type="{entity_type}">{entity_text}</{tagname}>'
+                    entity_tag = soup.new_tag(tagname, type=entity_type)
+                    entity_tag.string = entity_text
+                    paragraph_tag.append(entity_tag)
             index = entity['end_pos']
-    markup += text[index:]
-    markup += ' '
-    return markup
+    paragraph_tag.append(text[index:] + ' ')
 
 def create_header(title='', author='', editor='', publisher='', publisher_address='',
                   publication_date='', license_desc='', project_description='', source_description=''):
@@ -152,9 +164,7 @@ def create_body(flair_output):
     soup.body.append(soup.new_tag('div'))
     for paragraph in flair_output:
         paragraph_tag = soup.new_tag('p')
-        markup = create_markup_with_entities(paragraph)
-        markup = markup[0:-1]
-        paragraph_tag.string = markup
+        markup = create_markup_with_entities(paragraph, paragraph_tag, soup)
         soup.div.append(paragraph_tag)
     return soup
 
