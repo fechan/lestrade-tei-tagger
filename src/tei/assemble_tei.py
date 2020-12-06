@@ -28,11 +28,11 @@ tag_dict = {
 
 def create_markup_with_entities(annotated_text, paragraph_tag, soup):
     '''Given some source text and Flair-like annotated text, create TEI markup with
-    the entities wrapped in the appropriate tag names
+    the entities wrapped in the appropriate tag names. Then put them in the given paragraph tag.
     
     annotated_text: text that we've run through a Flair-like tagger
-
-    TODO: edit this docstring
+    paragraph_tag: the paragraph to add text and entity tags to
+    soup: BeautifulSoup object of the paragraph_tag
     '''
     text = annotated_text['text']
     entities = annotated_text['entities']
