@@ -176,14 +176,6 @@ def create_xml(header, body):
     soup.TEI.append(body)
     root = etree.fromstring(str(soup))
     xml_str = etree.tostring(root, pretty_print=True).decode()
-    # xml_str = re.sub('&lt;', '<', xml_str)
-    # xml_str = re.sub('&gt;', '>', xml_str)
-    # xml_str = re.sub('&amp;', '&', xml_str)
-    # xml_str = re.sub('&#163;', '£', xml_str)
-    # xml_str = re.sub('&#8220;', '"', xml_str)
-    # xml_str = re.sub('&#8221;', '"', xml_str)
-    # xml_str = re.sub('&#8217;', "'", xml_str)
-    xml_str = re.sub(' Nile.', ' <placeName ref="Nile">Nile</placeName>.', xml_str)
 
     return xml_str.encode('utf-8')
 
