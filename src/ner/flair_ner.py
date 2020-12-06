@@ -36,15 +36,15 @@ class NamedEntityRecognizer:
         self.tagger.close()
 
     def to_xml_id(self, interpretation):
-        """Turns a Mathematica text content interpreation into a unique ID that can be used as an XML
-        attribute value. Returns none if it's not a Mathematica entity.
+        """Turns a Mathematica text content interpreation into a unique ID.
+        Returns none if it's not a Mathematica entity.
 
         interpretation -- Mathematica text content interpretation to turn into and ID
         """
         if type(interpretation) is str or interpretation.head.name != 'Entity': return None
         entity_type = interpretation.args[0]
         canonical_name = interpretation.args[1]
-        canonical_name = html.escape(json.dumps(canonical_name, separators=(',', ':')))
+        canonical_name = json.dumps(canonical_name, separators=(',', ':'))
         return f"urn:WolframEntity:{entity_type}:{canonical_name}"
 
     def is_overlapping(self, x1, x2, y1, y2):
