@@ -11,7 +11,7 @@ from src.utils.ref_utils import create_initials_ref, create_name_ref, create_ref
 #             'ORG': 'name'}
 tag_dict = {
     'Person': 'persName',
-    'City': 'settlement',
+    'City': 'placeName',
     'Company': 'orgName',
     'Quantity': 'measure',
     'CurrencyAmount': 'measure',
