@@ -24,9 +24,8 @@ class NamedEntityRecognizer:
             tagger_output['entities'] = [entity for entity in tagger_output['entities'] if entity['confidence'] >= self.min_confidence]
             tagger_output['entities'] = self.remove_entity_overlaps(tagger_output['entities'])
             for entity in tagger_output['entities']:
-                entity_id = self.to_xml_id(entity['interpretation'])
-                entity['id'] = entity_id
-                if entity_id != None: self.seen_entities[entity_id] = entity['interpretation']
+                entity_ref = self.to_ref_attribute(entity['interpretation'])
+                entity['ref'] = entity_ref
             output.append(tagger_output)
         return output
 
@@ -38,17 +37,28 @@ class NamedEntityRecognizer:
         """Closes the Wolfram Kernel session"""
         self.tagger.close()
 
-    def to_xml_id(self, interpretation):
-        """Turns a Mathematica text content interpreation into a unique ID.
+    def to_ref_attribute(self, interpretation):
+        """Creates the entire @ref attribute string for a Mathematica entity.
+        This always includes a Mathematica entity URN. If a TEI index is requested, a TEI Index
+        URN will be included as well.
         Returns none if it's not a Mathematica entity.
 
-        interpretation -- Mathematica text content interpretation to turn into and ID
+        interpretation -- Mathematica text content interpretation to turn into a @ref string
         """
         if type(interpretation) is str or interpretation.head.name != 'Entity': return None
+
         entity_type = interpretation.args[0]
         canonical_name = interpretation.args[1]
         canonical_name = json.dumps(canonical_name, separators=(',', ':'))
-        return f"urn:WolframEntity:{entity_type}:{canonical_name}"
+        mathematica_ref = f"urn:WolframEntity:{entity_type}:{canonical_name}"
+        ref_tokens = [mathematica_ref]
+        
+        if self.generate_index:
+            entity_id = re.sub("[^0-9a-zA-Z]+", "", canonical_name)
+            ref_tokens.append(f"urn:{self.index_name}:{entity_id}")
+
+        self.seen_entities[mathematica_ref] = interpretation
+        return " ".join(ref_tokens)
 
     def is_overlapping(self, x1, x2, y1, y2):
         """Determines if two ranges (x1, x2) and (y1, y2) overlap"""
