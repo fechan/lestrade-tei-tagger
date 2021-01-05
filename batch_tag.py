@@ -22,7 +22,7 @@ for filename in filenames:
     with open(f"./tei_files/{filename}.tei", "w") as output_file:
         with open(f"./txt_files/{filename}", "r") as book:
             content = book.read()
-        output_file.write(create_document(ner, content))
+        output_file.write(create_document(ner, content, title="test document"))
 print("All files in txt_files directory tagged.")
 print(ner.get_seen_entities())
 ner.close()
