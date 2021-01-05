@@ -25,61 +25,66 @@
     <geoDecl xml:id="ITRF00">International Terrestrial Reference Frame 2000</geoDecl>
   </teiHeader>
 
-    <text>
-      <body>
+  <text>
+    <body>
+      <div type="people">
+        <listPerson type="People">
+          <person xml:id="VARIABLE Alice" sex="f">
+            <persName>VARIABLE Alice</persName>
+            <birth when="VARIABLE 1900-01-01">
+              <placeName>VARIABLE Cairo, Egypt</placeName>
+            </birth>
+            <death when="VARIABLE 1900-01-01">
+              <placeName>VARIABLE Cairo, Egypt</placeName>
+            </death>
+            <occupation type="VARIABLE theather" subtype="VARIABLE actor"/> <!-- multiple of these can exist here -->
+            <note>VARIABLE Notable information about Alice</note>
+          </person>
+        </listPerson>
+      </div>
 
-        <div type="people">
-          <listPerson type="People">
-            <person xml:id="VARIABLE Alice" sex="f">
-              <persName>VARIABLE Alice</persName>
-              <birth when="VARIABLE 1900-01-01">
-                <placeName>VARIABLE Cairo, Egypt</placeName>
-              </birth>
-              <death when="VARIABLE 1900-01-01">
-                <placeName>VARIABLE Cairo, Egypt</placeName>
-              </death>
-              <occupation type="VARIABLE theather" subtype="VARIABLE actor"/> <!-- multiple of these can exist here -->
-              <note>VARIABLE Notable information about Alice</note>
-            </person>
-          </listPerson>
-        </div>
+      <div type="places">
+        <listPlace type="Museum">
+          <place xml:id="VARIABLE GrandEgyptianMuseum">
+            <placeName>VARIABLE Grand Egyptian Museum</placeName>
+            <location>
+              <geo decls="#ITRF00">VARIABLE 0.00 0.00</geo>
+              <country>VARIABLE Egypt</country>
+            </location>
+            <note>VARIABLE Notable information about the place</note>
+          </place>
+        </listPlace>
+        <listPlace type="HistoricalSite"></listPlace>
+        <listPlace type="City"></listPlace>
+        <listPlace type="Country"></listPlace>
+        <listPlace type="River"></listPlace>
+        <listPlace type="Location"></listPlace>
+      </div>
 
-        <div type="places">
-          <listPlace type="Museum">
-            <place xml:id="VARIABLE GrandEgyptianMuseum">
-              <placeName>VARIABLE Grand Egyptian Museum</placeName>
-              <location>
-                <geo decls="#ITRF00">VARIABLE 0.00 0.00</geo>
-                <country>VARIABLE Egypt</country>
-              </location>
-              <note>VARIABLE Notable information about the place</note>
-            </place>
-          </listPlace>
-          <listPlace type="HistoricalSite"></listPlace>
-          <listPlace type="City"></listPlace>
-          <listPlace type="Country"></listPlace>
-          <listPlace type="River"></listPlace>
-          <listPlace type="Location"></listPlace>
-        </div>
+      <div type="art">
+        <list type="Artwork">
+          <figure xml:id="VARIABLE ArtId">
+            <bibl>
+              <title level="m">VARIABLE title</title>
+              <author>
+                <persName key="VARIABLE #personId">VARIABLE artist</persName>
+              </author>
+              <date when="VARIABLE 1900-01-01">VARIABLE 1 January 1900</date>
+              <note>VARIABLE Notable information about the art</note>
+            </bibl>
+          </figure>
+        </list>
+      </div>
+      
+      <div type="organizations">
+        <listOrg type="Company">
+          <org xml:id="VARIABLE companyId">
 
-        <div type="art">
-          <list type="Artwork">
-            <figure xml:id="VARIABLE ArtId">
-              <bibl>
-                <title level="m">VARIABLE title</title>
-                <author>
-                  <persName ref="VARIABLE #personId">VARIABLE artist</persName>
-                </author>
-                <date when="1900-01-01">1 January 1900</date>
-                <note>VARIABLE Notable information about the art</note>
-              </bibl>
-            </figure>
-          </list>
-        </div>
-        
-        <div type="organizations"></div>
-        <div type="ships"></div>
-      </body>
-    </text>
-  </teiHeader>
+          </org>
+        </listOrg>
+      </div>
+      
+      <div type="ships"></div>
+    </body>
+  </text>
 </TEI>
