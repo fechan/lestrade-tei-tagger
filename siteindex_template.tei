@@ -22,6 +22,9 @@
         </licence>
       </publicationStmt>
     </fileDesc>
+    <geoDecl xml:id="ITRF00">International Terrestrial Reference Frame 2000</geoDecl>
+  </teiHeader>
+
     <text>
       <body>
 
