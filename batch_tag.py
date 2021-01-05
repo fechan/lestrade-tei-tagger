@@ -15,6 +15,8 @@ ner = NamedEntityRecognizer(
     settings['wolfram_kernel_path'],
     settings['content_types_precedence_order'],
     settings['minimum_confidence'],
+    settings['generate_tei_index'],
+    settings['tei_index_name']
 )
 filenames = next(os.walk("txt_files"))[2]
 for filename in filenames:
@@ -22,7 +24,7 @@ for filename in filenames:
     with open(f"./tei_files/{filename}.tei", "w") as output_file:
         with open(f"./txt_files/{filename}", "r") as book:
             content = book.read()
-        output_file.write(create_document(ner, content, title="test document"))
+        output_file.write(create_document(ner, content, title=filename))
 print("All files in txt_files directory tagged.")
 print(ner.get_seen_entities())
 ner.close()
