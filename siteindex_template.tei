@@ -67,7 +67,7 @@
             <bibl>
               <title level="m">VARIABLE title</title>
               <author>
-                <persName key="VARIABLE #personId">VARIABLE artist</persName>
+                <persName ref="VARIABLE #personId">VARIABLE artist</persName>
               </author>
               <date when="VARIABLE 1900-01-01">VARIABLE 1 January 1900</date>
               <note>VARIABLE Notable information about the art</note>
@@ -79,12 +79,20 @@
       <div type="organizations">
         <listOrg type="Company">
           <org xml:id="VARIABLE companyId">
-
+            <orgName>VARIABLE Company name</orgName>
+            <note>VARIABLE Notable information about the company</note>
           </org>
         </listOrg>
       </div>
-      
-      <div type="ships"></div>
+
+      <div type="ships">
+        <listObject type="Ship">
+          <object xml:id="VARIABLE objectId">
+            <objectName>VARIABLE Object Name</objectName>
+            <note>VARIABLE Notable Information about the ship</note>
+          </object>
+        </listObject>
+      </div>
     </body>
   </text>
 </TEI>
