@@ -5,12 +5,15 @@ import json
 import html
 
 class NamedEntityRecognizer:
-    def __init__(self, wolfram_kernel_path, type_precedence, min_confidence):
+    def __init__(self, wolfram_kernel_path, type_precedence, min_confidence, generate_index,
+            index_name):
         """Creates a new named entity recognizer"""
         self.tagger = SequenceTagger(wolfram_kernel_path)
         self.type_precedence = type_precedence
         self.min_confidence = min_confidence
         self.seen_entities = dict() # Looks like {'id': entity}. Each entity has a unique canonical id, which is nice because it also prevents duplicates
+        self.generate_index = generate_index
+        self.index_name = index_name
 
     def tag_entities(self, text):
         """Tags entities in plaintext in a format similar to Flair"""
