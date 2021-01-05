@@ -40,7 +40,7 @@ def create_markup_with_entities(annotated_text, paragraph_tag, soup):
     for entity in entities:
         entity_type = entity["type"]
         entity_text = entity["text"]
-        entity_id = entity["id"]
+        entity_ref = entity["id"]
         tagname = tag_dict.get(entity['type'], "name")
         if entity_text not in ["I’ve", "I’ll", "I", "I’m", "I've", "I'll", "I'm", "I,", "Today", "today"]: # Mathematica thinks instances of "today" refers to runtime
             paragraph_tag.append(text[index:entity['start_pos']])
@@ -93,8 +93,8 @@ def create_markup_with_entities(annotated_text, paragraph_tag, soup):
 
                     paragraph_tag.append(place_tag)
             else:
-                if entity_id != None:
-                    entity_tag = soup.new_tag(tagname, type=entity_type, ref=entity_id)
+                if entity_ref != None:
+                    entity_tag = soup.new_tag(tagname, type=entity_type, ref=entity_ref)
                     entity_tag.string = entity_text
                     paragraph_tag.append(entity_tag)
                 else:
