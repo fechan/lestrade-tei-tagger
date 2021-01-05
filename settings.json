@@ -1,6 +1,7 @@
 {
     "wolfram_kernel_path": "/opt/Mathematica/SystemFiles/Kernel/Binaries/Linux-x86-64/WolframKernel",
     "minimum_confidence": 0.8,
+    "tei_index_name": "testTeiIndex",
     "content_types_precedence_order": [
         "Person",
         "Museum",
