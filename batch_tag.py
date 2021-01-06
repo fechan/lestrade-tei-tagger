@@ -7,6 +7,7 @@ import os
 import json
 from src.ner.flair_ner import NamedEntityRecognizer
 from src.tei.assemble_document import create_document
+from src.tei.assemble_tei_index import IndexAssembler
 
 with open('settings.json', 'r') as f:
     settings = json.load(f)
@@ -26,5 +27,6 @@ for filename in filenames:
             content = book.read()
         output_file.write(create_document(ner, content, title=filename))
 print("All files in txt_files directory tagged.")
-print(ner.get_seen_entities())
+assembler = IndexAssembler(ner.tagger.session)
+print(assembler.create_index(ner.get_seen_entities()))
 ner.close()
