@@ -11,9 +11,14 @@ class NamedEntityRecognizer:
         self.tagger = SequenceTagger(wolfram_kernel_path)
         self.type_precedence = type_precedence
         self.min_confidence = min_confidence
-        self.seen_entities = dict() # Looks like {'id': entity}. Each entity has a unique canonical id, which is nice because it also prevents duplicates
         self.generate_index = generate_index
         self.index_name = index_name
+
+        # Looks like {'Mathematica URN': ('entity_index_id', entity)}
+        # Each entity has a unique canonical URN, which is nice because it also prevents duplicates.
+        # entity_index_id is the xml:id of the entity in the TEI index. If no index is requested by
+        # the user, entity_index_id will be None
+        self.seen_entities = dict() 
 
     def tag_entities(self, text):
         """Tags entities in plaintext in a format similar to Flair"""
@@ -38,9 +43,8 @@ class NamedEntityRecognizer:
         self.tagger.close()
 
     def to_ref_attribute(self, interpretation):
-        """Creates the entire @ref attribute string for a Mathematica entity.
-        This always includes a Mathematica entity URN. If a TEI index is requested, a TEI Index
-        URN will be included as well.
+        """Creates the @ref attribute string for a Mathematica entity.If a TEI index is requested,
+        this will be a TEI Index URN. Otherwise, it will be a Mathematica/Wolfram Language URN.
         Returns none if it's not a Mathematica entity.
 
         interpretation -- Mathematica text content interpretation to turn into a @ref string
@@ -50,15 +54,17 @@ class NamedEntityRecognizer:
         entity_type = interpretation.args[0]
         canonical_name = interpretation.args[1]
         canonical_name = json.dumps(canonical_name, separators=(',', ':'))
+        # We always generate the mathematica_ref, since this is a unique identifier that we'll use
+        # a key for seen_entities, even if doesn't show up in the marked up text
         mathematica_ref = f"urn:WolframEntity:{entity_type}:{canonical_name}"
-        ref_tokens = [mathematica_ref]
         
+        index_ref = None
         if self.generate_index:
             entity_id = re.sub("[^0-9a-zA-Z]+", "", canonical_name)
-            ref_tokens.append(f"urn:{self.index_name}:{entity_id}")
+            index_ref = (f"urn:{self.index_name}:{entity_id}")
 
-        self.seen_entities[mathematica_ref] = interpretation
-        return " ".join(ref_tokens)
+        self.seen_entities[mathematica_ref] = (index_ref, interpretation)
+        return index_ref if self.generate_index else mathematica_ref
 
     def is_overlapping(self, x1, x2, y1, y2):
         """Determines if two ranges (x1, x2) and (y1, y2) overlap"""
