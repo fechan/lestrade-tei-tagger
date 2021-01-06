@@ -63,7 +63,7 @@ class NamedEntityRecognizer:
             entity_id = re.sub("[^0-9a-zA-Z]+", "", canonical_name)
             index_ref = (f"urn:{self.index_name}:{entity_id}")
 
-        self.seen_entities[mathematica_ref] = (index_ref, interpretation)
+        self.seen_entities[mathematica_ref] = (entity_id, interpretation)
         return index_ref if self.generate_index else mathematica_ref
 
     def is_overlapping(self, x1, x2, y1, y2):
