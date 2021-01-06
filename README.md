@@ -16,7 +16,7 @@ urn:TEI_INDEX_NAME:ENTITY_ID
 ```
 > Example: If Lestrade tags `<persName ref="urn:myTeiIndex:bob">Bob</persName>` in the original text and the TEI index is named "myTeiIndex", then Lestrade will generate a TEI index named "myTeiIndex" that contains `<person xml:id="bob">`.
 
-### Wolfram Language Entity URI Scheme
+### Wolfram Language Entity URN Scheme
 If Mathematica thinks a text entity has a Wolfram Language entity interpretation, then the text entity's entry in the TEI
 index will have a @ref attribute containing a URN with the following schema:
 ```
