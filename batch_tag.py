@@ -27,6 +27,8 @@ for filename in filenames:
             content = book.read()
         output_file.write(create_document(ner, content, title=filename))
 print("All files in txt_files directory tagged.")
-assembler = IndexAssembler(ner.tagger.session)
-print(assembler.create_index(ner.get_seen_entities()))
+with open(f"./tei_files/{settings['tei_index_name']}.tei", 'w') as output_file:
+    print("Creating TEI index")
+    assembler = IndexAssembler(ner.tagger.session)
+    output_file.write(assembler.create_index(ner.get_seen_entities()))
 ner.close()
