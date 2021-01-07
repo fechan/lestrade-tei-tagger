@@ -77,12 +77,7 @@
       </div>
       
       <div type="organizations">
-        <listOrg type="Company">
-          <org xml:id="VARIABLE companyId">
-            <orgName>VARIABLE Company name</orgName>
-            <note>VARIABLE Notable information about the company</note>
-          </org>
-        </listOrg>
+        <listOrg type="Company"></listOrg>
       </div>
 
       <div type="ships">
