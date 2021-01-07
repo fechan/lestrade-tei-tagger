@@ -28,7 +28,7 @@
   <text>
     <body>
       <div type="people">
-        <listPerson type="People">
+        <listPerson type="Person">
           <person xml:id="VARIABLE Alice" sex="f">
             <persName>VARIABLE Alice</persName>
             <birth when="VARIABLE 1900-01-01">
