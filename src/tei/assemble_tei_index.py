@@ -22,7 +22,7 @@ class IndexAssembler:
             if entity_type == 'Company':
                 org = self.get_company_tag(soup, mathematica_urn, xml_id, interpretation)
                 soup.find('listOrg', attrs={'type': 'Company'}).append(org)
-            elif entity_type == 'People':
+            elif entity_type == 'Person':
                 person = self.get_person_tag(soup, mathematica_urn, xml_id, interpretation)
                 soup.find('listPerson', attrs={'type': 'Person'}).append(person)
         return str(soup.prettify())
@@ -102,13 +102,13 @@ class IndexAssembler:
             person.append(occupation)
 
         note = soup.new_tag('note')
-        notable_facts = session.evaluate(
+        notable_facts = self.session.evaluate(
             wl.Map(
                 wl.ToString,
                 wl.EntityValue(interpretation, "NotableFacts")
             )
         )
-        note.append(notable_facts)
+        note.append(". ".join(notable_facts))
         person.append(note)
 
         return person
