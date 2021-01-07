@@ -28,19 +28,7 @@
   <text>
     <body>
       <div type="people">
-        <listPerson type="Person">
-          <person xml:id="VARIABLE Alice" sex="f">
-            <persName>VARIABLE Alice</persName>
-            <birth when="VARIABLE 1900-01-01">
-              <placeName>VARIABLE Cairo, Egypt</placeName>
-            </birth>
-            <death when="VARIABLE 1900-01-01">
-              <placeName>VARIABLE Cairo, Egypt</placeName>
-            </death>
-            <occupation type="VARIABLE theather" subtype="VARIABLE actor"/> <!-- multiple of these can exist here -->
-            <note>VARIABLE Notable information about Alice</note>
-          </person>
-        </listPerson>
+        <listPerson type="Person"></listPerson>
       </div>
 
       <div type="places">
