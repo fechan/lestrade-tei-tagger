@@ -32,17 +32,9 @@
       </div>
 
       <div type="places">
-        <listPlace type="Museum">
-          <place xml:id="VARIABLE GrandEgyptianMuseum">
-            <placeName>VARIABLE Grand Egyptian Museum</placeName>
-            <location>
-              <geo decls="#ITRF00">VARIABLE 0.00 0.00</geo>
-              <country>VARIABLE Egypt</country>
-            </location>
-            <note>VARIABLE Notable information about the place</note>
-          </place>
-        </listPlace>
+        <listPlace type="Museum"></listPlace>
         <listPlace type="HistoricalSite"></listPlace>
+        <listPlace type="Building"></listPlace>
         <listPlace type="City"></listPlace>
         <listPlace type="Country"></listPlace>
         <listPlace type="River"></listPlace>

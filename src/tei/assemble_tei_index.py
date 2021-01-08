@@ -25,7 +25,55 @@ class IndexAssembler:
             elif entity_type == 'Person':
                 person = self.get_person_tag(soup, mathematica_urn, xml_id, interpretation)
                 soup.find('listPerson', attrs={'type': 'Person'}).append(person)
+            elif entity_type in ['Museum', 'HistoricalSite', 'City', 'Building']:
+                place = self.get_place_tag(soup, mathematica_urn, xml_id, interpretation)
+                soup.find('listPlace', attrs={'type': entity_type}).append(place)
         return str(soup.prettify())
+
+    def get_place_tag(self, soup, mathematica_urn, xml_id, interpretation):
+        """Generate the TEI index entry for a place
+
+        <place xml:id="GrandEgyptianMuseum">
+            <placeName>Grand Egyptian Museum</placeName>
+            <location>
+              <geo decls="#ITRF00">0.00 0.00</geo>
+              <country key="EG">Egypt</country>
+            </location>
+        </place>
+        """
+        place = soup.new_tag('place', attrs={
+            'xml:id': xml_id,
+            'ref': mathematica_urn,
+        })
+
+        placeName = soup.new_tag('placeName')
+        name = self.session.evaluate(wl.EntityValue(interpretation, 'Name'))
+        placeName.append(name)
+
+        location = soup.new_tag('location')
+        # geo coordinates tag
+        geo = soup.new_tag('geo', attrs={'decls': '#ITRF00'})
+        coords = self.session.evaluate(wl.EntityValue(interpretation, "Coordinates"))
+        longitude = coords[1]
+        latitude = coords[0]
+        geo.append(str(latitude) + ' ' + str(longitude))
+        location.append(geo)
+        # country tag
+        country_entity = self.session.evaluate(wl.EntityValue(interpretation, "Country")) # Depending on the entity, this will be a country Entity or a tuple containing one
+        if type(country_entity) is not tuple:
+            if country_entity.head.name == 'Missing': # Sometimes the entity's country property is named "Countries" instead
+                country_entity = self.session.evaluate(wl.EntityValue(interpretation, "Countries"))
+                country_entity = country_entity[0]
+        else:
+            country_entity = country_entity[0]
+        country_name = self.session.evaluate(wl.EntityValue(country_entity, "Name"))
+        country_code = self.session.evaluate(wl.EntityValue(country_entity, "CountryCode"))
+        country = soup.new_tag('country', attrs={'key': country_code})
+        country.append(country_name)
+        location.append(country)
+        place.append(location)
+
+        return place
 
     def get_person_tag(self, soup, mathematica_urn, xml_id, interpretation):
         """"Generate a TEI index entry for a person
