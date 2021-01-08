@@ -101,7 +101,7 @@ def create_markup_with_entities(annotated_text, paragraph_tag, soup):
                     entity_tag.string = entity_text
                     paragraph_tag.append(entity_tag)
             index = entity['end_pos']
-    paragraph_tag.append(text[index:] + ' ')
+    paragraph_tag.append(text[index:])
 
 def create_header(title='', author='', editor='', publisher='', publisher_address='',
                   publication_date='', license_desc='', project_description='', source_description=''):
