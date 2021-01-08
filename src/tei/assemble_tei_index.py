@@ -28,7 +28,7 @@ class IndexAssembler:
         return str(soup.prettify())
 
     def get_person_tag(self, soup, mathematica_urn, xml_id, interpretation):
-        """"Generate the a TEI index entry for a person
+        """"Generate a TEI index entry for a person
 
         Looks like:
         <person xml:id="Alice" sex="f">
