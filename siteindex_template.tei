@@ -46,7 +46,6 @@
         <listPlace type="City"></listPlace>
         <listPlace type="Country"></listPlace>
         <listPlace type="River"></listPlace>
-        <listPlace type="Location"></listPlace>
       </div>
 
       <div type="art">
