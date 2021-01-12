@@ -7,14 +7,14 @@ Lestrade TEI Tagger is based off of Audrey Holmes' [Historical Markup Tool](http
 which used Flair to detect entities.
 
 ## Entity ref URN schemes
-Lestrade will produce produce various URIs (identifiers) for entities, which allows TEI documents to reference other documents/databases with additional information about those entities. These URIs will appear in the `@ref` attribute of a tagged entity in a text. 
+Lestrade will produce produce various URNs (a kind of identifier) for entities, which allows TEI documents to reference other documents/databases with additional information about those entities. These URNs will appear in the `@ref` attribute of an entity in a text or TEI index.
 
 ### TEI Index URN Scheme
 If Lestrade tags an entity that appears in a TEI index it generates, the tag in the text will have a URN of this format. This URN corresponds to the name of the TEI index as given in `setttings.json` plus the `@xml:id` of the corresponding entity in that index. The URN has the following schema:
 ```
-urn:TEI_INDEX_NAME:ENTITY_ID
+urn:teiindex:TEI_INDEX_NAME:ENTITY_ID
 ```
-> Example: If Lestrade tags `<persName ref="urn:myTeiIndex:bob">Bob</persName>` in the original text and the TEI index is named "myTeiIndex", then Lestrade will generate a TEI index named "myTeiIndex" that contains `<person xml:id="bob">`.
+> Example: If Lestrade tags `<persName ref="urn:teiindex:myTeiIndex:bob">Bob</persName>` in the original text and the TEI index is named "myTeiIndex", then Lestrade will generate a TEI index named "myTeiIndex" that contains `<person xml:id="bob">`.
 
 ### Wolfram Language Entity URN Scheme
 If Mathematica thinks a text entity has a Wolfram Language entity interpretation, then the text entity's entry in the TEI
