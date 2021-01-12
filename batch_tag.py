@@ -31,5 +31,12 @@ if settings['generate_tei_index'] == True:
     with open(f"./tei_files/{settings['tei_index_name']}.tei", 'w') as output_file:
         print("Creating TEI index")
         assembler = IndexAssembler(ner.tagger.session)
-        output_file.write(assembler.create_index(ner.get_seen_entities()))
+        output_file.write(assembler.create_index(
+            ner.get_seen_entities(),
+            settings['tei_index_title'],
+            settings['tei_index_author'],
+            settings['tei_index_sponsor'],
+            settings['tei_index_authority'],
+            settings['tei_index_licence']
+        ))
 ner.close()

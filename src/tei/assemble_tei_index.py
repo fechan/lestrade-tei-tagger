@@ -13,9 +13,15 @@ class IndexAssembler:
         self.session = wl_session
         self.dateformat = wl.List('Year', '-', 'Month', '-', 'Day')
 
-    def create_index(self, seen_entities):
+    def create_index(self, seen_entities, title, author, sponsor, authority, licence):
         """Generate a TEI index out of the seen_entities of a NamedEntityRecognizer"""
         soup = BeautifulSoup(template, 'xml')
+        soup.find('title').append(title)
+        soup.find('author').append(author)
+        soup.find('sponsor').append(sponsor)
+        soup.find('authority').append(authority)
+        soup.find('licence').append(licence)
+
         for mathematica_urn, entity_data in seen_entities.items():
             xml_id, interpretation = entity_data
             entity_type = interpretation[0]
