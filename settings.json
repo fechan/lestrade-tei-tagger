@@ -3,6 +3,11 @@
     "minimum_confidence": 0.8,
     "generate_tei_index": true,
     "tei_index_name": "testTeiIndex",
+    "tei_index_title": "Test TEI Index",
+    "tei_index_author": "Nile Travelogues Editors",
+    "tei_index_sponsor": "Nile Travelogues",
+    "tei_index_authority": "Nile Travelogues",
+    "tei_index_license": "Creative Commons BY-NC-SA 3.0",
     "content_types_precedence_order": [
         "Person",
         "Museum",
