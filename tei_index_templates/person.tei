@@ -1,12 +1,12 @@
 <person xml:id="" sex=""> <!-- sex is a single character like "m" or "f" -->
-	<persName></persName>
-	<desc type="shortDescription"></desc>
-	<birth when=""> <!-- YYYY-MM-DD format -->
-		<placeName></placeName>
-	</birth>
-	<death when="">
-		<placeName></placeName>
-	</death>
-	<occupation type=""></occupation> <!-- multiple of these can exist here -->
-	<note></note>
+  <persName></persName>
+  <desc type="shortDescription"></desc>
+  <birth when=""> <!-- YYYY-MM-DD format -->
+    <placeName></placeName>
+  </birth>
+  <death when="">
+    <placeName></placeName>
+  </death>
+  <occupation type=""></occupation> <!-- multiple of these can exist here -->
+  <note></note>
 </person>
