@@ -1,9 +1,22 @@
 from bs4 import BeautifulSoup
 from wolframclient.language import wl, wlexpr
+import wikidata.client
+import copy
 
-template_file = open('siteindex_template.tei', 'r')
+template_file = open('tei_index_templates/siteindex.tei', 'r')
 template = template_file.read()
 template_file.close()
+
+wiki_pids = {
+    'birth': 'P569',
+    'birthplace': 'P19',
+    'death': 'P570',
+    'deathplace': 'P20',
+    'occupation': 'P106',
+    'country': 'P17',
+    'coordinates': 'P625',
+    'sex': 'P21'
+}
 
 class IndexAssembler:
     def __init__(self, wl_session):
@@ -11,7 +24,7 @@ class IndexAssembler:
         wl_session -- an active Wolfram kernel session
         """
         self.session = wl_session
-        self.dateformat = wl.List('Year', '-', 'Month', '-', 'Day')
+        self.wikiclient = wikidata.client.Client()
 
     def create_index(self, seen_entities, title, author, sponsor, authority, licence):
         """Generate a TEI index out of the seen_entities of a NamedEntityRecognizer"""
@@ -24,174 +37,89 @@ class IndexAssembler:
 
         for mathematica_urn, entity_data in seen_entities.items():
             xml_id, interpretation = entity_data
+            wikidata_id = self.session.evaluate(wl.WikidataData(interpretation, 'WikidataID'))[0][1]
+            wikientity = self.wikiclient.get(wikidata_id, load=True)
             entity_type = interpretation[0]
-            if entity_type == 'Company':
-                org = self.get_company_tag(soup, mathematica_urn, xml_id, interpretation)
-                soup.find('listOrg', attrs={'type': 'Company'}).append(org)
-            elif entity_type == 'Person':
-                person = self.get_person_tag(soup, mathematica_urn, xml_id, interpretation)
+            if entity_type == 'Person':
+                person = self.get_person_tag(mathematica_urn, xml_id, wikientity)
                 soup.find('listPerson', attrs={'type': 'Person'}).append(person)
-            elif entity_type in ['Museum', 'HistoricalSite', 'City', 'Building']:
-                place = self.get_place_tag(soup, mathematica_urn, xml_id, interpretation)
-                soup.find('listPlace', attrs={'type': entity_type}).append(place)
         return str(soup.prettify())
 
-    def get_place_tag(self, soup, mathematica_urn, xml_id, interpretation):
-        """Generate the TEI index entry for a place
+    def wikiprop(self, wikientity, prop):
+        """Get the value of the property specified by the property name for the given Wikidata
+        entity. Property names and associated Wikidata PIDs are defined in the wiki_pids
+        constant.
 
-        <place xml:id="GrandEgyptianMuseum">
-            <placeName>Grand Egyptian Museum</placeName>
-            <location>
-              <geo decls="#ITRF00">0.00 0.00</geo>
-              <country key="EG">Egypt</country>
-            </location>
-        </place>
+        wikientity -- Wikidata entity
+        prop -- property name
         """
-        place = soup.new_tag('place', attrs={
-            'xml:id': xml_id,
-            'ref': mathematica_urn,
-        })
+        return wikientity.get(self.wikiclient.get(wiki_pids[prop]))
 
-        placeName = soup.new_tag('placeName')
-        name = self.session.evaluate(wl.EntityValue(interpretation, 'Name'))
-        placeName.append(name)
-
-        location = soup.new_tag('location')
-        # geo coordinates tag
-        geo = soup.new_tag('geo', attrs={'decls': '#ITRF00'})
-        coords = self.session.evaluate(wl.EntityValue(interpretation, "Coordinates"))
-        longitude = coords[1]
-        latitude = coords[0]
-        geo.append(str(latitude) + ' ' + str(longitude))
-        location.append(geo)
-        # country tag
-        country_entity = self.session.evaluate(wl.EntityValue(interpretation, "Country")) # Depending on the entity, this will be a country Entity or a tuple containing one
-        if type(country_entity) is not tuple:
-            if country_entity.head.name == 'Missing': # Sometimes the entity's country property is named "Countries" instead
-                country_entity = self.session.evaluate(wl.EntityValue(interpretation, "Countries"))
-                country_entity = country_entity[0]
+    def date_wikiprop(self, wikientity, prop):
+        prop = wiki_pids[prop]
+        value = wikientity.attributes['claims'][prop][0]['mainsnak']['datavalue']['value']
+        date = value['time'].split("T")[0]
+        precision = value['precision']
+        bc = date.startswith("-")
+        if date.startswith("-") or date.startswith("+"):
+            date = date[1:]
+        if precision >= 11:
+            return date
         else:
-            country_entity = country_entity[0]
-        country_name = self.session.evaluate(wl.EntityValue(country_entity, "Name"))
-        country_code = self.session.evaluate(wl.EntityValue(country_entity, "CountryCode"))
-        country = soup.new_tag('country', attrs={'key': country_code})
-        country.append(country_name)
-        location.append(country)
-        place.append(location)
+            date_string = ""
+            year, month, day = date.split("-")
+            if precision == 10:
+                date_string = f"{year}-{month}"
+            elif precision < 9:
+                date_string = f"{year}"
 
-        return place
+            if bc:
+                return f"-{date_string}"
+            else:
+                return date_string
 
-    def get_person_tag(self, soup, mathematica_urn, xml_id, interpretation):
-        """"Generate a TEI index entry for a person
+    def read_template(self, path, tag_name):
+        """Get a BeautifulSoup of a TEI index template. You have to specify the name of the tag you
+        want as well.
 
-        Looks like:
-        <person xml:id="Alice" sex="f">
-            <persName>Alice</persName>
-            <birth when="1900-01-01">
-                <placeName>Cairo, Egypt</placeName>
-            </birth>
-            <death when="1900-01-01">
-                <placeName>Cairo, Egypt</placeName>
-            </death>
-            <occupation type="actor"/> <!-- multiple of these can exist here -->
-            <note>Notable information about Alice</note>
-        </person>
+        path -- file path of template
+        tag_name -- name of the tag the template is for
         """
-        gender = self.session.evaluate(
-            wl.EntityValue(
-                wl.EntityValue(interpretation, 'Gender'),
-                'Name'
-            )
-        )
-        person = soup.new_tag('person', attrs={
-            'xml:id': xml_id,
-            'ref': mathematica_urn,
-            'sex': gender[0]
-        })
+        tei_file = open(path, 'r')
+        tei_template = tei_file.read()
+        tei_file.close()
 
-        persName = soup.new_tag('persName')
-        name = self.session.evaluate(wl.EntityValue(interpretation, "Name"))
-        persName.append(name)
-        person.append(persName)
+        soup = BeautifulSoup(tei_template, 'xml')
+        soup = soup.find(tag_name) # we have to do this otherwise BS inserts an XML declaration
+        return copy.copy(soup)
 
-        birthday = self.session.evaluate(
-            wl.DateString(
-                wl.EntityValue(interpretation, "BirthDate"),
-                self.dateformat
-            )
-        )
-        birth = soup.new_tag('birth', attrs={'when': birthday})
-        placeName = soup.new_tag('placeName')
-        birthplace = self.session.evaluate(
-            wl.CityData(
-                wl.EntityValue(interpretation, "BirthPlace"),
-                "FullName"
-            )
-        )
-        placeName.append(birthplace)
-        birth.append(placeName)
-        person.append(birth)
+    def get_person_tag(self, mathematica_urn, xml_id, wikientity):
+        name = str(wikientity.label)
+        short_desc = str(wikientity.description)
+        sex = str(self.wikiprop(wikientity, 'sex').label)[0]
+        birth = self.date_wikiprop(wikientity, 'birth')
+        birthplace = str(self.wikiprop(wikientity, 'birthplace').label)
+        death = self.date_wikiprop(wikientity, 'death')
+        deathplace = str(self.wikiprop(wikientity, 'deathplace').label)
+        occupation = self.wikiprop(wikientity, 'occupation')
+        occupation_name = str(occupation.label)
+        occupation_desc = str(occupation.description)
 
-        deathday = self.session.evaluate(
-            wl.DateString(
-                wl.EntityValue(interpretation, "DeathDate"),
-                self.dateformat
-            )
-        )
-        death = soup.new_tag('death', attrs={'when': deathday})
-        placeName = soup.new_tag('placeName')
-        deathplace = self.session.evaluate(
-            wl.CityData(
-                wl.EntityValue(interpretation, "DeathPlace"),
-                "FullName"
-            )
-        )
-        placeName.append(deathplace)
-        death.append(placeName)
-        person.append(death)
+        person = self.read_template('tei_index_templates/person.tei', 'person')
+        person.attrs = {'xml:id': xml_id, 'sex': sex}
 
-        occupations = self.session.evaluate(wl.EntityValue(interpretation, "Occupation"))
-        for occupation_name in occupations:
-            occupation = soup.new_tag("occupation", attrs={'type': occupation_name})
-            person.append(occupation)
+        person.find('persName').append(name)
+        person.find('desc', type='shortDescription').append(short_desc)
 
-        note = soup.new_tag('note')
-        notable_facts = self.session.evaluate(
-            wl.Map(
-                wl.ToString,
-                wl.EntityValue(interpretation, "NotableFacts")
-            )
-        )
-        note.append(". ".join(notable_facts))
-        person.append(note)
+        birth_tag = person.find('birth')
+        birth_tag.attrs = {'when': birth}
+        birth_tag.find('placeName').append(birthplace)
+
+        death_tag = person.find('death')
+        death_tag.attrs = {'when': death}
+        death_tag.find('placeName').append(deathplace)
+
+        person.find('occupation').attrs = {'type': occupation_name}
+        person.find('occupation').append(occupation_desc)
 
         return person
-
-
-    def get_company_tag(self, soup, mathematica_urn, xml_id, interpretation):
-        """Generate a TEI index entry for a company.
-
-        Looks like:
-        <org xml:id="companyId">
-            <orgName>Company name</orgName>
-            <note>Notable information about the company</note>
-        </org>
-        """
-        org = soup.new_tag('org', attrs={
-            'xml:id': xml_id,
-            'ref': mathematica_urn
-        })
-                
-        orgName = soup.new_tag('orgName')
-        name = self.session.evaluate(wl.EntityValue(interpretation, "Name"))
-        orgName.append(name)
-        org.append(orgName)
-
-        note = soup.new_tag('note')
-        industry = self.session.evaluate(wl.EntityValue(interpretation, "Industry"))
-        founded = self.session.evaluate(wl.DateString(wl.EntityValue(interpretation, "FoundingDate")))
-        status = self.session.evaluate(wl.EntityValue(interpretation, "Status")).lower()
-        note.append(f"{industry} company founded in {founded}. Currently {status}.")
-        org.append(note)
-
-        return org
