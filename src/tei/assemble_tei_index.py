@@ -70,7 +70,7 @@ class IndexAssembler:
             year, month, day = date.split("-")
             if precision == 10:
                 date_string = f"{year}-{month}"
-            elif precision < 9:
+            elif precision <= 9:
                 date_string = f"{year}"
 
             if bc:
