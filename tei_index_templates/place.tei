@@ -1,6 +1,7 @@
 <!-- Also used for: Museum, HistoricalSite, City, Building -->
 <place xml:id="">
   <placeName></placeName>
+  <desc type="shortDescription"></desc>
   <location>
     <geo decls="#ITRF00"></geo> <!-- text content will be latitude space longitude -->
     <country key=""></country> <!-- key is an ISO Alpha-2 code -->
