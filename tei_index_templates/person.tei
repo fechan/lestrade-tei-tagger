@@ -7,6 +7,6 @@
 	<death when="">
 		<placeName></placeName>
 	</death>
-	<occupation type=""/> <!-- multiple of these can exist here -->
+	<occupation type=""></occupation> <!-- multiple of these can exist here -->
 	<note></note>
 </person>
