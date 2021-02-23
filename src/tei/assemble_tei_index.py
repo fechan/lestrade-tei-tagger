@@ -52,6 +52,9 @@ class IndexAssembler:
             if entity_type == 'Person':
                 person = self.get_person_tag(mathematica_urn, xml_id, wikientity)
                 soup.find('listPerson', attrs={'type': 'Person'}).append(person)
+            if entity_type in ['Museum', 'HistoricalSite', 'Building', 'City', 'Country', 'River']:
+                place = self.get_place_tag(mathematica_urn, xml_id, wikientity)
+                soup.find('listPlace', attrs={'type': entity_type}).append(place)
         return str(soup.prettify())
 
     def wikiprop(self, wikientity, prop):
