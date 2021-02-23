@@ -108,6 +108,12 @@ class IndexAssembler:
         return copy.copy(soup)
 
     def get_person_tag(self, mathematica_urn, xml_id, wikientity):
+        """Generate a person tag for the given wiki entity
+
+        mathematica_urn -- Mathematica URN of person (used for ref)
+        xml_id -- XML ID of the person
+        wikientity -- Wikidata entity of the person
+        """
         name = str(wikientity.label)
         short_desc = str(wikientity.description)
         sex = str(self.wikiprop(wikientity, 'sex').label)[0]
