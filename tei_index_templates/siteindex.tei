@@ -22,7 +22,7 @@
         <licence></licence>
       </publicationStmt>
     </fileDesc>
-    <geoDecl xml:id="ITRF00" datum="ITRF00">International Terrestrial Reference Frame 2000</geoDecl>
+    <geoDecl xml:id="WGS" datum="WGS84">World Geodetic System</geoDecl>
   </teiHeader>
 
   <text>
