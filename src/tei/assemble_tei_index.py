@@ -1,4 +1,4 @@
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Comment
 from wolframclient.language import wl, wlexpr
 import wikidata.client
 import copy
@@ -55,6 +55,9 @@ class IndexAssembler:
             if entity_type in ['Museum', 'HistoricalSite', 'Building', 'City', 'Country', 'River']:
                 place = self.get_place_tag(mathematica_urn, xml_id, wikientity)
                 soup.find('listPlace', attrs={'type': entity_type}).append(place)
+        # Remove comments from final index
+        for element in soup(text=lambda text: isinstance(text, Comment)):
+            element.extract()
         return str(soup.prettify())
 
     def wikiprop(self, wikientity, prop):
