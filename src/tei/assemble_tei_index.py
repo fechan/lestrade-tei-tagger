@@ -27,7 +27,15 @@ class IndexAssembler:
         self.wikiclient = wikidata.client.Client()
 
     def create_index(self, seen_entities, title, author, sponsor, authority, licence):
-        """Generate a TEI index out of the seen_entities of a NamedEntityRecognizer"""
+        """Generate a TEI index out of the seen_entities of a NamedEntityRecognizer
+        
+        seen_entities -- list of entities seen by the TEI tagger
+        title -- title of TEI index
+        author -- TEI index author
+        sponsor -- TEI index sponsor
+        authority -- TEI index authority
+        license -- TEI index license
+        """
         soup = BeautifulSoup(template, 'xml')
         soup.find('title').append(title)
         soup.find('author').append(author)
@@ -56,6 +64,12 @@ class IndexAssembler:
         return wikientity.get(self.wikiclient.get(wiki_pids[prop]))
 
     def date_wikiprop(self, wikientity, prop):
+        """Get the datestring value of the property of the Wikidata entity.
+        This only works with dates. Imprecise dates will return TEI-compatible partial date strings.
+
+        wikientity -- Wikidata entity
+        prop -- property name
+        """
         prop = wiki_pids[prop]
         value = wikientity.attributes['claims'][prop][0]['mainsnak']['datavalue']['value']
         date = value['time'].split("T")[0]
