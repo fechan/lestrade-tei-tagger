@@ -48,7 +48,10 @@ class IndexAssembler:
 
         for mathematica_urn, entity_data in seen_entities.items():
             xml_id, interpretation = entity_data
-            wikidata_id = self.session.evaluate(wl.WikidataData(interpretation, 'WikidataID'))[0][1]
+            try:
+                wikidata_id = self.session.evaluate(wl.WikidataData(interpretation, 'WikidataID'))[0][1]
+            except IndexError: # If the Wolfram Entity lacks a WikiData ID, skip it
+                continue
             wikientity = self.wikiclient.get(wikidata_id, load=True)
             entity_type = interpretation[0]
             if entity_type == 'Person':
