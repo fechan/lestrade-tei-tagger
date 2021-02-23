@@ -117,9 +117,9 @@ class IndexAssembler:
         coordinates = self.wikiprop(wikientity, 'coordinates')
         latitude = str(coordinates.latitude)
         longitude = str(coordinates.longitude)
-        country = str(self.wikiprop(wikientity, 'country'))
+        country = self.wikiprop(wikientity, 'country')
         country_name = str(country.label)
-        country_code = self.wikiprop(wikientity, 'country code')
+        country_code = self.wikiprop(country, 'country code')
 
         place = self.read_template('tei_index_templates/place.tei', 'place')
         place.attrs = {'xml:id': xml_id, 'ref': mathematica_urn}
