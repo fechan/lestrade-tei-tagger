@@ -16,6 +16,7 @@ wiki_pids = {
     'country': 'P17',
     'coordinates': 'P625',
     'sex': 'P21',
+    'country code': 'P297'
 }
 
 class IndexAssembler:
@@ -110,9 +111,25 @@ class IndexAssembler:
     def get_place_tag(self, mathematica_urn, xml_id, wikientity):
         name = str(wikientity.label)
         short_desc = str(wikientity.description)
-        latitude = self.wikiprop(wikientity, 'coordinates')
-        longitude =
-        country = 
+        coordinates = self.wikiprop(wikientity, 'coordinates')
+        latitude = str(coordinates.latitude)
+        longitude = str(coordinates.longitude)
+        country = str(self.wikiprop(wikientity, 'country'))
+        country_name = str(country.label)
+        country_code = self.wikiprop(wikientity, 'country code')
+
+        place = self.read_template('tei_index_templates/place.tei', 'place')
+        place.attrs = {'xml:id': xml_id, 'ref': mathematica_urn}
+
+        place.find('placeName').append(name)
+        place.find('desc', type='shortDescription').append(short_desc)
+
+        place.find('geo').append(f'{latitude} {longitude}')
+        country_tag = place.find('country')
+        country_tag.attrs = {'key': country_code}
+        country_tag.append(country_name)
+
+        return place
 
     def get_person_tag(self, mathematica_urn, xml_id, wikientity):
         """Generate a person tag for the given wiki entity
