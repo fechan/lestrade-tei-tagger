@@ -106,7 +106,7 @@ class IndexAssembler:
         occupation_desc = str(occupation.description)
 
         person = self.read_template('tei_index_templates/person.tei', 'person')
-        person.attrs = {'xml:id': xml_id, 'sex': sex}
+        person.attrs = {'xml:id': xml_id, 'sex': sex, 'ref': mathematica_urn}
 
         person.find('persName').append(name)
         person.find('desc', type='shortDescription').append(short_desc)
