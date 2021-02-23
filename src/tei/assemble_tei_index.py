@@ -16,7 +16,9 @@ wiki_pids = {
     'country': 'P17',
     'coordinates': 'P625',
     'sex': 'P21',
-    'country code': 'P297'
+    'country code': 'P297',
+    'creator': 'P170',
+    'inception': 'P571'
 }
 
 class IndexAssembler:
@@ -113,6 +115,27 @@ class IndexAssembler:
         soup = BeautifulSoup(tei_template, 'xml')
         soup = soup.find(tag_name) # we have to do this otherwise BS inserts an XML declaration
         return copy.copy(soup)
+
+    def get_art_figure_tag(self, mathematica_urn, xml_id, wikientity):
+        """Generate a figure tag for the given wiki entity of an artwork
+
+        mathematica_urn -- Mathematica URN of the artwork (used for ref)
+        xml_id -- XML ID of the artwork
+        wikientity -- Wikidata entity of the artwork
+        """
+        name = str(wikientity.label)
+        short_desc = str(wikientity.description)
+        author = str(self.wikiprop(wikientity, 'coordinates'))
+        date = str(self.date_wikiprop(wikientity, 'inception'))
+
+        figure = self.read_template('tei_index_templates/place.tei', 'figure')
+        figure.attrs = {'xml:id': xml_id, 'ref': mathematica_urn}
+
+        figure.find('title').append(name)
+        figure.find('desc', type='shortDescription').append(short_desc)
+        
+        figure.find('persName').append(name)
+        figure.find('date').attrs = {'when': date}
 
     def get_place_tag(self, mathematica_urn, xml_id, wikientity):
         """Generate a place tag for the given wiki entity
