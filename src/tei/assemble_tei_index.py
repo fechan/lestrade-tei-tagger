@@ -15,7 +15,7 @@ wiki_pids = {
     'occupation': 'P106',
     'country': 'P17',
     'coordinates': 'P625',
-    'sex': 'P21'
+    'sex': 'P21',
 }
 
 class IndexAssembler:
@@ -106,6 +106,13 @@ class IndexAssembler:
         soup = BeautifulSoup(tei_template, 'xml')
         soup = soup.find(tag_name) # we have to do this otherwise BS inserts an XML declaration
         return copy.copy(soup)
+
+    def get_place_tag(self, mathematica_urn, xml_id, wikientity):
+        name = str(wikientity.label)
+        short_desc = str(wikientity.description)
+        latitude = self.wikiprop(wikientity, 'coordinates')
+        longitude =
+        country = 
 
     def get_person_tag(self, mathematica_urn, xml_id, wikientity):
         """Generate a person tag for the given wiki entity
