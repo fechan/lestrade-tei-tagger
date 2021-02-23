@@ -115,6 +115,12 @@ class IndexAssembler:
         return copy.copy(soup)
 
     def get_place_tag(self, mathematica_urn, xml_id, wikientity):
+        """Generate a place tag for the given wiki entity
+
+        mathematica_urn -- Mathematica URN of place (used for ref)
+        xml_id -- XML ID of the place
+        wikientity -- Wikidata entity of the place
+        """
         name = str(wikientity.label)
         short_desc = str(wikientity.description)
         coordinates = self.wikiprop(wikientity, 'coordinates')
