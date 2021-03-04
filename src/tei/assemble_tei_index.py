@@ -54,9 +54,6 @@ class IndexAssembler:
                 continue
             wikientity = self.wikiclient.get(wikidata_id, load=True)
             entity_type = interpretation[0]
-            if entity_type == 'Person':
-                person = self.get_person_tag(mathematica_urn, xml_id, wikientity)
-                soup.find('listPerson', attrs={'type': 'Person'}).append(person)
             if entity_type in ['Museum', 'HistoricalSite', 'Building', 'City', 'Country', 'River']:
                 place = self.get_place_tag(mathematica_urn, xml_id, wikientity)
                 soup.find('listPlace', attrs={'type': entity_type}).append(place)
