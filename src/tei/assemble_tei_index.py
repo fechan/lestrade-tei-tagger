@@ -119,6 +119,24 @@ class IndexAssembler:
         soup = soup.find(tag_name) # we have to do this otherwise BS inserts an XML declaration
         return copy.copy(soup)
 
+    def get_company_org_tag(self, mathematica_urn, xml_id, wikientity):
+        """Generate an org tag for the given wikidata entity of a company
+
+        mathematica_urn -- Mathematica URN of the company (used for ref)
+        xml_id -- XML ID of the company
+        wikientity -- Wikidata entity of the company
+        """
+        name = str(wikientity.label)
+        short_desc = str(wikientity.description)
+
+        org = self.read_template('tei_index_templates/company.tei', 'org')
+        org.attrs = {'xml:id': xml_id, 'ref': mathematica_urn}
+
+        org.find('orgName').append(name)
+        org.find('desc', type='shortDescription').append(short_desc)
+
+        return org
+
     def get_art_figure_tag(self, mathematica_urn, xml_id, wikientity):
         """Generate a figure tag for the given wiki entity of an artwork
 
