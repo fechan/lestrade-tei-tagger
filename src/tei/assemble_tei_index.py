@@ -131,7 +131,7 @@ class IndexAssembler:
         author = str(self.wikiprop(wikientity, 'coordinates'))
         date = str(self.date_wikiprop(wikientity, 'inception'))
 
-        figure = self.read_template('tei_index_templates/place.tei', 'figure')
+        figure = self.read_template('tei_index_templates/artwork.tei', 'figure')
         figure.attrs = {'xml:id': xml_id, 'ref': mathematica_urn}
 
         figure.find('title').append(name)
