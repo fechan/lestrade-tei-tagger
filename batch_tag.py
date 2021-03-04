@@ -37,6 +37,7 @@ if settings['generate_tei_index'] == True:
             settings['tei_index_author'],
             settings['tei_index_sponsor'],
             settings['tei_index_authority'],
-            settings['tei_index_licence']
+            settings['tei_index_licence'],
+            settings['tei_index_ref_type']
         ))
 ner.close()

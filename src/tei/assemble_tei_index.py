@@ -29,7 +29,7 @@ class IndexAssembler:
         self.session = wl_session
         self.wikiclient = wikidata.client.Client()
 
-    def create_index(self, seen_entities, title, author, sponsor, authority, licence):
+    def create_index(self, seen_entities, title, author, sponsor, authority, licence, ref_type):
         """Generate a TEI index out of the seen_entities of a NamedEntityRecognizer
         
         seen_entities -- list of entities seen by the TEI tagger
@@ -38,6 +38,7 @@ class IndexAssembler:
         sponsor -- TEI index sponsor
         authority -- TEI index authority
         license -- TEI index license
+        ref_type -- What kind of values we should put in ref attributes of entities (can be "Wikidata QID" or "WolframEntity URN")
         """
         soup = BeautifulSoup(template, 'xml')
         soup.find('title').append(title)
@@ -54,7 +55,11 @@ class IndexAssembler:
                 continue
             wikientity = self.wikiclient.get(wikidata_id, load=True)
             entity_type = interpretation[0]
-            ref = mathematica_urn
+            if ref_type == "Wikidata QID":
+                ref = 'https://www.wikidata.org/wiki/' + wikidata_id
+            else:
+                ref = mathematica_urn
+
             if entity_type in ['Museum', 'HistoricalSite', 'Building', 'City', 'Country', 'River']:
                 place = self.get_place_tag(ref, xml_id, wikientity)
                 soup.find('listPlace', attrs={'type': entity_type}).append(place)
