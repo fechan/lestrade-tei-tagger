@@ -66,6 +66,9 @@ class IndexAssembler:
             elif entity_type == 'Company':
                 org = self.get_company_org_tag(mathematica_urn, xml_id, wikientity)
                 soup.find('listOrg', attrs={'type': 'Company'}).append(org)
+            elif entity_type == 'Ship':
+                ship = self.get_ship_object_tag(mathematica_urn, xml_id, wikientity)
+                soup.find('listObject', attrs={'type': 'Ship'}).append(ship)
         # Remove comments from final index
         for element in soup(text=lambda text: isinstance(text, Comment)):
             element.extract()
@@ -124,6 +127,24 @@ class IndexAssembler:
         soup = BeautifulSoup(tei_template, 'xml')
         soup = soup.find(tag_name) # we have to do this otherwise BS inserts an XML declaration
         return copy.copy(soup)
+
+    def get_ship_object_tag(self, mathematica_urn, xml_id, wikientity):
+        """Generate an object tag for the given wikidata entity of a ship
+
+        mathematica_urn -- Mathematica URN of the ship (used for ref)
+        xml_id -- XML ID of the ship
+        wikientity -- Wikidata entity of the ship
+        """
+        name = str(wikientity.label)
+        short_desc = str(wikientity.description)
+
+        ship = self.read_template('tei_index_templates/ship.tei', 'object')
+        org.attrs = {'xml:id': xml_id, 'ref': mathematica_urn}
+
+        ship.find('objectName').append(name)
+        ship.find('desc', type='shortDescription').append(short_desc)
+
+        return ship
 
     def get_company_org_tag(self, mathematica_urn, xml_id, wikientity):
         """Generate an org tag for the given wikidata entity of a company
