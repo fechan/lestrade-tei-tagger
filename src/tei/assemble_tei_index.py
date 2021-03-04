@@ -54,20 +54,21 @@ class IndexAssembler:
                 continue
             wikientity = self.wikiclient.get(wikidata_id, load=True)
             entity_type = interpretation[0]
+            ref = mathematica_urn
             if entity_type in ['Museum', 'HistoricalSite', 'Building', 'City', 'Country', 'River']:
-                place = self.get_place_tag(mathematica_urn, xml_id, wikientity)
+                place = self.get_place_tag(ref, xml_id, wikientity)
                 soup.find('listPlace', attrs={'type': entity_type}).append(place)
             elif entity_type == 'Person':
-                person = self.get_person_tag(mathematica_urn, xml_id, wikientity)
+                person = self.get_person_tag(ref, xml_id, wikientity)
                 soup.find('listPerson', attrs={'type': 'Person'}).append(person)
             elif entity_type == 'Artwork':
-                figure = self.get_art_figure_tag(mathematica_urn, xml_id, wikientity)
+                figure = self.get_art_figure_tag(ref, xml_id, wikientity)
                 soup.find('list', attrs={'type': 'Artwork'}).append(figure)
             elif entity_type == 'Company':
-                org = self.get_company_org_tag(mathematica_urn, xml_id, wikientity)
+                org = self.get_company_org_tag(ref, xml_id, wikientity)
                 soup.find('listOrg', attrs={'type': 'Company'}).append(org)
             elif entity_type == 'Ship':
-                ship = self.get_ship_object_tag(mathematica_urn, xml_id, wikientity)
+                ship = self.get_ship_object_tag(ref, xml_id, wikientity)
                 soup.find('listObject', attrs={'type': 'Ship'}).append(ship)
         # Remove comments from final index
         for element in soup(text=lambda text: isinstance(text, Comment)):
@@ -128,10 +129,10 @@ class IndexAssembler:
         soup = soup.find(tag_name) # we have to do this otherwise BS inserts an XML declaration
         return copy.copy(soup)
 
-    def get_ship_object_tag(self, mathematica_urn, xml_id, wikientity):
+    def get_ship_object_tag(self, ref, xml_id, wikientity):
         """Generate an object tag for the given wikidata entity of a ship
 
-        mathematica_urn -- Mathematica URN of the ship (used for ref)
+        ref -- TEI ref attribute value
         xml_id -- XML ID of the ship
         wikientity -- Wikidata entity of the ship
         """
@@ -139,17 +140,17 @@ class IndexAssembler:
         short_desc = str(wikientity.description)
 
         ship = self.read_template('tei_index_templates/ship.tei', 'object')
-        org.attrs = {'xml:id': xml_id, 'ref': mathematica_urn}
+        org.attrs = {'xml:id': xml_id, 'ref': ref}
 
         ship.find('objectName').append(name)
         ship.find('desc', type='shortDescription').append(short_desc)
 
         return ship
 
-    def get_company_org_tag(self, mathematica_urn, xml_id, wikientity):
+    def get_company_org_tag(self, ref, xml_id, wikientity):
         """Generate an org tag for the given wikidata entity of a company
 
-        mathematica_urn -- Mathematica URN of the company (used for ref)
+        ref -- TEI ref attribute value
         xml_id -- XML ID of the company
         wikientity -- Wikidata entity of the company
         """
@@ -157,17 +158,17 @@ class IndexAssembler:
         short_desc = str(wikientity.description)
 
         org = self.read_template('tei_index_templates/company.tei', 'org')
-        org.attrs = {'xml:id': xml_id, 'ref': mathematica_urn}
+        org.attrs = {'xml:id': xml_id, 'ref': ref}
 
         org.find('orgName').append(name)
         org.find('desc', type='shortDescription').append(short_desc)
 
         return org
 
-    def get_art_figure_tag(self, mathematica_urn, xml_id, wikientity):
+    def get_art_figure_tag(self, ref, xml_id, wikientity):
         """Generate a figure tag for the given wiki entity of an artwork
 
-        mathematica_urn -- Mathematica URN of the artwork (used for ref)
+        ref -- TEI ref attribute value
         xml_id -- XML ID of the artwork
         wikientity -- Wikidata entity of the artwork
         """
@@ -177,7 +178,7 @@ class IndexAssembler:
         date = str(self.date_wikiprop(wikientity, 'inception'))
 
         figure = self.read_template('tei_index_templates/artwork.tei', 'figure')
-        figure.attrs = {'xml:id': xml_id, 'ref': mathematica_urn}
+        figure.attrs = {'xml:id': xml_id, 'ref': ref}
 
         figure.find('title').append(name)
         figure.find('desc', type='shortDescription').append(short_desc)
@@ -187,10 +188,10 @@ class IndexAssembler:
 
         return figure
 
-    def get_place_tag(self, mathematica_urn, xml_id, wikientity):
+    def get_place_tag(self, ref, xml_id, wikientity):
         """Generate a place tag for the given wiki entity
 
-        mathematica_urn -- Mathematica URN of place (used for ref)
+        ref -- TEI ref attribute value
         xml_id -- XML ID of the place
         wikientity -- Wikidata entity of the place
         """
@@ -204,7 +205,7 @@ class IndexAssembler:
         country_code = self.wikiprop(country, 'country code')
 
         place = self.read_template('tei_index_templates/place.tei', 'place')
-        place.attrs = {'xml:id': xml_id, 'ref': mathematica_urn}
+        place.attrs = {'xml:id': xml_id, 'ref': ref}
 
         place.find('placeName').append(name)
         place.find('desc', type='shortDescription').append(short_desc)
@@ -216,10 +217,10 @@ class IndexAssembler:
 
         return place
 
-    def get_person_tag(self, mathematica_urn, xml_id, wikientity):
+    def get_person_tag(self, ref, xml_id, wikientity):
         """Generate a person tag for the given wiki entity
 
-        mathematica_urn -- Mathematica URN of person (used for ref)
+        ref -- TEI ref attribute value
         xml_id -- XML ID of the person
         wikientity -- Wikidata entity of the person
         """
@@ -235,7 +236,7 @@ class IndexAssembler:
         occupation_desc = str(occupation.description)
 
         person = self.read_template('tei_index_templates/person.tei', 'person')
-        person.attrs = {'xml:id': xml_id, 'sex': sex, 'ref': mathematica_urn}
+        person.attrs = {'xml:id': xml_id, 'sex': sex, 'ref': ref}
 
         person.find('persName').append(name)
         person.find('desc', type='shortDescription').append(short_desc)

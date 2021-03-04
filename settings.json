@@ -8,6 +8,7 @@
     "tei_index_sponsor": "Nile Travelogues",
     "tei_index_authority": "Nile Travelogues",
     "tei_index_licence": "Creative Commons BY-NC-SA 3.0",
+    "tei_index_ref_type": "Wikidata QID",
     "content_types_precedence_order": [
         "Person",
         "Museum",
