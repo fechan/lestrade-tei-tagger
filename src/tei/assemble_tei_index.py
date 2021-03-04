@@ -60,6 +60,15 @@ class IndexAssembler:
             if entity_type in ['Museum', 'HistoricalSite', 'Building', 'City', 'Country', 'River']:
                 place = self.get_place_tag(mathematica_urn, xml_id, wikientity)
                 soup.find('listPlace', attrs={'type': entity_type}).append(place)
+            elif entity_type == 'Person':
+                person = self.get_person_tag(mathematica_urn, xml_id, wikientity)
+                soup.find('listPerson', attrs={'type': 'Person'}).append(person)
+            elif entity_type == 'Artwork':
+                figure = self.get_art_figure_tag(mathematica_urn, xml_id, wikientity)
+                soup.find('list', attrs={'type': 'Artwork'}).append(figure)
+            elif entity_type == 'Company':
+                org = self.get_company_org_tag(mathematica_urn, xml_id, wikientity)
+                soup.find('listOrg', attrs={'type': 'Company'}).append(org)
         # Remove comments from final index
         for element in soup(text=lambda text: isinstance(text, Comment)):
             element.extract()
