@@ -1,0 +1,11 @@
+<figure xml:id="">
+  <bibl>
+    <title></title>
+    <desc type="shortDescription"></desc>
+    <author>
+      <persName ref=""></persName> <!-- ref should be an #xml:id to the author in the index -->>
+    </author>
+    <date when=""></date> <!-- when is YYYY-MM-DD; date should have human readable text contents -->
+    <note></note>
+  </bibl>
+</figure>

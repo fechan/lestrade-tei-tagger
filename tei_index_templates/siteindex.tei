@@ -22,7 +22,7 @@
         <licence></licence>
       </publicationStmt>
     </fileDesc>
-    <geoDecl xml:id="ITRF00" datum="ITRF00">International Terrestrial Reference Frame 2000</geoDecl>
+    <geoDecl xml:id="WGS" datum="WGS84">World Geodetic System</geoDecl>
   </teiHeader>
 
   <text>
@@ -41,18 +41,7 @@
       </div>
 
       <div type="art">
-        <list type="Artwork">
-          <figure xml:id="VARIABLE ArtId">
-            <bibl>
-              <title level="m">VARIABLE title</title>
-              <author>
-                <persName ref="VARIABLE #personId">VARIABLE artist</persName>
-              </author>
-              <date when="VARIABLE 1900-01-01">VARIABLE 1 January 1900</date>
-              <note>VARIABLE Notable information about the art</note>
-            </bibl>
-          </figure>
-        </list>
+        <list type="Artwork"></list>
       </div>
       
       <div type="organizations">
@@ -60,12 +49,7 @@
       </div>
 
       <div type="ships">
-        <listObject type="Ship">
-          <object xml:id="VARIABLE objectId">
-            <objectName>VARIABLE Object Name</objectName>
-            <note>VARIABLE Notable Information about the ship</note>
-          </object>
-        </listObject>
+        <listObject type="Ship"></listObject>
       </div>
     </body>
   </text>
