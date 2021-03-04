@@ -140,6 +140,8 @@ class IndexAssembler:
         figure.find('persName').append(name)
         figure.find('date').attrs = {'when': date}
 
+        return figure
+
     def get_place_tag(self, mathematica_urn, xml_id, wikientity):
         """Generate a place tag for the given wiki entity
 
